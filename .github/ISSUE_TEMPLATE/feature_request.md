@@ -2,7 +2,7 @@
 name: Feature request
 about: 아이디어 제안
 title: ''
-labels: ''
+labels: 'Type: Ideation'
 assignees: ''
 
 ---
