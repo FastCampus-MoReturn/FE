@@ -14,7 +14,3 @@ assignees: ''
 ** 생각한 대한 **
 
 ** 추가 컨텍스트 **
-
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
