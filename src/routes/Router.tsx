@@ -1,7 +1,7 @@
 import { Route, Routes } from 'react-router-dom';
 import NotFound from '@/pages/NotFound';
 
-function Router() {
+const Router = () => {
   return (
     <div>
       <Routes>
@@ -9,6 +9,6 @@ function Router() {
       </Routes>
     </div>
   );
-}
+};
 
 export default Router;

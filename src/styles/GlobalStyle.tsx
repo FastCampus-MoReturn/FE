@@ -7,8 +7,8 @@ const style = css`
   ${reset}
 `;
 
-function GlobalStyle() {
+const GlobalStyle = () => {
   return <Global styles={style} />;
-}
+};
 
 export default GlobalStyle;
