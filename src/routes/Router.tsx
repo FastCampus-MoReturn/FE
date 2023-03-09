@@ -1,7 +1,7 @@
-import NotFound from '@/pages/NotFound';
 import { Route, Routes } from 'react-router-dom';
+import NotFound from '@/pages/NotFound';
 
-const Router = () => {
+function Router() {
   return (
     <div>
       <Routes>
@@ -9,6 +9,6 @@ const Router = () => {
       </Routes>
     </div>
   );
-};
+}
 
 export default Router;
