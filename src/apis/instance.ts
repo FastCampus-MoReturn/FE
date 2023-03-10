@@ -19,7 +19,8 @@ const axiosApi = (url: string) => {
   instance.interceptors.request.use(
     (config) => {
       const token = false; // 수정 필요
-      if (token) config.headers['Authorization'] = `Bearer ${token}`;
+      // eslint-disable-next-line no-param-reassign
+      if (token) config.headers.Authorization = `Bearer ${token}`;
       return config;
     },
     (error) => {

@@ -1,5 +1,5 @@
-import NotFound from '@/pages/NotFound';
 import { Route, Routes } from 'react-router-dom';
+import NotFound from '@/pages/NotFound';
 
 const Router = () => {
   return (
