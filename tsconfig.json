@@ -17,7 +17,8 @@
     "isolatedModules": true,
     "jsxImportSource": "@emotion/react",
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "types": ["kakao.maps.d.ts"]
   },
   "include": ["src", "src/utils/.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
