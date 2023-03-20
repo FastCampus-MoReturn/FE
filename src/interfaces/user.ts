@@ -1,1 +1,5 @@
-console.log('미작성 스크립트');
+const user = () => {
+  return 'hello world';
+};
+
+export default user;
