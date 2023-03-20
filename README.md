@@ -1,5 +1,7 @@
 # FE
 
+WBS 확인하기
+
 # 컨벤션 확인하기
 
 [개발 컨벤션](https://github.com/FastCampus-MoReturn/Final-Project-FE/wiki/Github-flow-Development-conventions)
