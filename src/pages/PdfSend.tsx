@@ -36,7 +36,7 @@ const PdfSend = (props: Props) => {
     const formData = new FormData();
     controllerRef.current = new AbortController();
 
-    formData.append('test', data.test[0] as Blob, encodeURIComponent(data.test[0].name));
+    formData.append('frm', data.test[0] as Blob, encodeURIComponent(data.test[0].name));
 
     const result = await instance
       .post('upload', formData, {
@@ -59,12 +59,7 @@ const PdfSend = (props: Props) => {
     <div>
       <Progress value={load} />
       <form onSubmit={handleSubmit(onSubmit)}>
-        <input
-          {...register('test')}
-          type="file"
-          name="test"
-          accept="application/pdf, image/png,  image/jpeg , image/bmp"
-        />
+        <input {...register('test')} type="file" name="test" accept="application/pdf" />
 
         <button type="button" disabled={!isSubmitting} onClick={cancelRequest}>
           Cancel
