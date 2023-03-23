@@ -9,12 +9,7 @@ const ModalPortal = () => {
   if (modal) {
     return ReactDOM.createPortal(
       <ModalDim>
-        <ContentWrap
-        // className="bg-white relative p-5 shadow-lg rounded flex flex-col items-start text-lg text-gray-800"
-        >
-          {/* <button type="button" onClick={() => handleModal()}>
-            &times;
-          </button> */}
+        <ContentWrap>
           <div>{modalContent}</div>
         </ContentWrap>
       </ModalDim>,
