@@ -1,41 +1,35 @@
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { setModal } from '@/store/modalSlice';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useContext } from 'react';
+import { ModalContext } from '@/contexts/modalContext';
 
 const NotFound = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const onClickOk = () => {
-    navigate('/');
-    dispatch(setModal({ isOpen: false }));
-  };
-
-  const onClickCancel = () => {
-    dispatch(setModal({ isOpen: false }));
-  };
+  const { openModal }: any = useContext(ModalContext);
   return (
     <>
       <p>존재하지 않는 페이지입니다.</p>
-      <button
-        type="button"
-        onClick={() => {
-          dispatch(
-            setModal({
-              isOpen: true,
-              title: '모달 타이틀',
-              description: '모달 메세지',
-              onClickOk,
-              onClickCancel,
-              cancelText: '텍스트 (취소)',
-              okText: '텍스트 (확인)',
-            }),
-          );
-        }}
-      >
-        홈으로 (모달 확인용)
+      <button type="button" onClick={() => openModal(<ContentComponent />)}>
+        모달버튼클릭
       </button>
     </>
   );
 };
 
 export default NotFound;
+
+const ContentComponent = () => {
+  const { closeModal }: any = useContext(ModalContext);
+  return (
+    <>
+      <h3>모달 제목</h3>
+      <p>모달 메세지</p>
+      <button type="button">커스텀 버튼</button>
+      <button
+        type="button"
+        className="h-8 px-3 text-white bg-red-500 text-xs rounded"
+        onClick={closeModal}
+      >
+        닫기버튼
+      </button>
+    </>
+  );
+};

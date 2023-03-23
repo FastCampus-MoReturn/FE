@@ -1,8 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
-import modal from './modalSlice';
 
 export const store = configureStore({
-  reducer: { modal: modal.reducer },
+  reducer: {},
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
   devTools: true,
 });

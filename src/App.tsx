@@ -1,13 +1,15 @@
 import { BrowserRouter } from 'react-router-dom';
 import Router from './routes/Router';
-import Modal from './components/ConfirmModal';
+// import Modal from './components/ConfirmModal';
+import { ModalProvider } from './contexts/modalContext';
 
 const App = () => {
   return (
-    <BrowserRouter>
-      <Router />
-      <Modal />
-    </BrowserRouter>
+    <ModalProvider>
+      <BrowserRouter>
+        <Router />
+      </BrowserRouter>
+    </ModalProvider>
   );
 };
 
