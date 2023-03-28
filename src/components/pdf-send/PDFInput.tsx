@@ -1,29 +1,132 @@
 import styled from '@emotion/styled';
+import { ChangeEvent, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import axios, { AxiosProgressEvent } from 'axios';
+import Progress from '@/components/pdf-send/Progress';
+import dragPresets from '@/components/pdf-send/dragEvent';
+
+export const instance = axios.create({
+  baseURL: 'http://localhost:4000',
+  headers: {
+    'Content-Type': 'multipart/form-data',
+    enctype: 'multipart/form-data',
+  },
+});
+
+type FormValues = {
+  test: FormData;
+};
 
 type Props = {};
 
 const PDFInput = (props: Props) => {
+  const controllerRef = useRef(new AbortController());
+  const inputRef = useRef<HTMLFileInputElement>(null);
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<FormValues>({ mode: 'onChange' });
+  const [load, setLoad] = useState(0);
+  const [drag, setDrag] = useState(false);
+  const [file, setFile] = useState<File>();
+
+  const cancelRequest = () => {
+    controllerRef.current.abort();
+    setLoad(0);
+  };
+
+  // 전송 과정( 전송 중임을 인식하기 위해 async 을 선언함 )
+  const onSubmit = async () => {
+    if (file === undefined) return;
+    const formData = new FormData();
+    controllerRef.current = new AbortController();
+
+    if (file instanceof File) formData.append('frm', file as File, encodeURIComponent(file.name));
+
+    const result = await instance
+      .post('upload', formData, {
+        signal: controllerRef.current.signal,
+        onUploadProgress: (progressEvent: AxiosProgressEvent) => {
+          if (progressEvent?.total === undefined) return;
+          const percentage = (progressEvent.loaded * 100) / progressEvent.total;
+          setLoad(percentage);
+        },
+      })
+      .catch((err) => {
+        return err;
+      });
+    // eslint-disable-next-line consistent-return
+    return result;
+  };
+
+  const fileChange = (oneFile: SetStateAction<File | undefined>) => {
+    setLoad(0);
+    if (oneFile instanceof File) setFile(oneFile);
+    if (oneFile === undefined) setFile(undefined);
+  };
+
+  interface HTMLFileInputElement extends HTMLInputElement {
+    files: FileList;
+  }
+
   return (
     <Globalbody>
-      <PDFInputForm>
+      <PDFInputForm onSubmit={handleSubmit(onSubmit)}>
         <PDFInputInfoBox>
           <PDFInputTitle>등기부등본 파일 업로드하기</PDFInputTitle>
           <PDFInputMsg>*PDF 파일만 업로드 가능합니다.</PDFInputMsg>
+          <Progress value={load} />
+          <PDFInputButton
+            type="button"
+            disabled={isSubmitting}
+            color="#8a8a8a"
+            onClick={() => {
+              setLoad(0);
+              setFile(undefined);
+            }}
+          >
+            <NotoSansMedium color="#fff">리셋</NotoSansMedium>
+          </PDFInputButton>
         </PDFInputInfoBox>
         <PDFInputBox>
           <PDFInputLabel>
-            <PDFInputComp type="file" />
-            xxxxx
-            <DeleteButton>
-              <NotoSansMedium size="14px" color="#fff">
-                삭제
-              </NotoSansMedium>
-            </DeleteButton>
+            <PDFInputComp
+              type="file"
+              accept="application/pdf"
+              ref={inputRef}
+              onChange={(e: ChangeEvent<HTMLFileInputElement>) => {
+                if (e.target.files.length === 0) return;
+                fileChange(e.target.files[0]);
+              }}
+            />
+            {file ? file.name : '선택되지 않음'}
+            {file ? (
+              <DeleteButton
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  fileChange(undefined);
+                }}
+              >
+                <NotoSansMedium size="14px" color="#fff">
+                  삭제
+                </NotoSansMedium>
+              </DeleteButton>
+            ) : null}
           </PDFInputLabel>
-          <PDFInputButton>
+          <PDFInputButton
+            type="button"
+            disabled={isSubmitting}
+            color="#8a8a8a"
+            onClick={() => {
+              if (inputRef.current === null) return;
+              inputRef.current.click();
+            }}
+          >
             <NotoSansMedium color="#fff">파일 선택</NotoSansMedium>
           </PDFInputButton>
-          <PDFInputButton>
+          <PDFInputButton type="submit" disabled={isSubmitting}>
             <NotoSansMedium color="#fff">파일 제출</NotoSansMedium>
           </PDFInputButton>
         </PDFInputBox>
@@ -45,7 +148,7 @@ const Globalbody = styled.main`
   max-width: 1240px;
 `;
 
-const PDFInputForm = styled.div`
+const PDFInputForm = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -128,7 +231,10 @@ const PDFInputLabel = styled.label`
   border-radius: 20px;
 `;
 
-const PDFInputButton = styled.div`
+type ColorButton = {
+  color?: string;
+};
+const PDFInputButton = styled.button<ColorButton>`
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -138,7 +244,7 @@ const PDFInputButton = styled.div`
   flex-grow: 1;
   height: 64px;
   padding: 0px 16px;
-  background: #1c2379;
+  background: ${(props) => props.color || '#1c2379'};
   border: 1px solid #e0e0e0;
   box-shadow: 0px 4px 5px #e6e6e6;
   border-radius: 20px;
