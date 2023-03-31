@@ -1,14 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext } from 'react';
 import { ModalContext } from '@/contexts/modalContext';
+import { error } from '@/apis/auth';
 
 const NotFound = () => {
   const { openModal }: any = useContext(ModalContext);
+
   return (
     <>
       <p>존재하지 않는 페이지입니다.</p>
       <button type="button" onClick={() => openModal(<ContentComponent />)}>
         모달버튼클릭
+      </button>
+      <button type="button" onClick={() => error()}>
+        에러버튼
       </button>
     </>
   );
