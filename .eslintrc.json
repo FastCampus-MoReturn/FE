@@ -37,6 +37,8 @@
       }
     ],
     "semi": "off",
+    "consistent-return": "off",
+    "no-restricted-globals": "off",
     "@typescript-eslint/semi": "error",
     "import/extensions": "off",
     "import/no-unresolved": "off",
