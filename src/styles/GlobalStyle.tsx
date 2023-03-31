@@ -5,9 +5,23 @@ import COLORS from './colors';
 
 const style = css`
   ${reset}
+  html, body {
+    background-color: #fff;
+    color: #000;
+
+    a {
+      color: #000;
+      text-decoration: none;
+    }
+  }
   * {
     box-sizing: border-box;
   }
+
+  button {
+    cursor: pointer;
+  }
+
   #root {
     display: flex;
     flex-direction: column;
