@@ -6,10 +6,11 @@ import Progress from '@/components/pdf-send/Progress';
 import dragPresets from '@/components/pdf-send/dragEvent';
 
 export const instance = axios.create({
-  baseURL: 'http://localhost:4000',
+  baseURL: 'https://moreturn.shop/',
   headers: {
     'Content-Type': 'multipart/form-data',
-    enctype: 'multipart/form-data',
+
+    accept: '*/*',
   },
 });
 
@@ -19,6 +20,10 @@ type FormValues = {
 
 type Props = {};
 
+interface HTMLFileInputElement extends HTMLInputElement {
+  files: FileList;
+}
+
 const PDFInput = (props: Props) => {
   const controllerRef = useRef(new AbortController());
   const inputRef = useRef<HTMLFileInputElement>(null);
@@ -26,66 +31,120 @@ const PDFInput = (props: Props) => {
     handleSubmit,
     formState: { isSubmitting },
   } = useForm<FormValues>({ mode: 'onChange' });
-  const [load, setLoad] = useState(0);
-  const [drag, setDrag] = useState(false);
+  const [progressLoad, setProgressLoad] = useState(0);
+  const [ProgressTotal, setProgressTotal] = useState(0);
   const [file, setFile] = useState<File>();
+  // 드롭 상태 관리
+  const [drag, setDrag] = useState(false);
+  const [pdfData, setPdfData] = useState({});
+
+  useEffect(() => {
+    console.log('pdfData', pdfData);
+  }, [pdfData]);
 
   const cancelRequest = () => {
     controllerRef.current.abort();
-    setLoad(0);
+    // 스타일 변경
+  };
+
+  const removeFileState = () => {
+    setProgressTotal(0);
+    setFile(undefined);
+    setProgressLoad(0);
+    if (inputRef.current) inputRef.current.value = '';
   };
 
   // 전송 과정( 전송 중임을 인식하기 위해 async 을 선언함 )
   const onSubmit = async () => {
-    if (file === undefined) return;
+    if (file === undefined) return alert('파일을 넣어주세요');
+
+    // const formData = new FormData();
     const formData = new FormData();
+    // 이름 뭘로 해도 body에 formData로 들어가는 것 같다
     controllerRef.current = new AbortController();
 
-    if (file instanceof File) formData.append('frm', file as File, encodeURIComponent(file.name));
+    if (file instanceof File)
+      formData.append('multipartFile', file as File, encodeURIComponent(file.name));
 
     const result = await instance
-      .post('upload', formData, {
+      .post('api/pdfupload', formData, {
         signal: controllerRef.current.signal,
         onUploadProgress: (progressEvent: AxiosProgressEvent) => {
           if (progressEvent?.total === undefined) return;
-          const percentage = (progressEvent.loaded * 100) / progressEvent.total;
-          setLoad(percentage);
+          // const percentage = (progressEvent.loaded * 100) / progressEvent.total;
+          setProgressTotal(progressEvent.total);
+          setProgressLoad(progressEvent.loaded);
         },
       })
       .catch((err) => {
         return err;
       });
     // eslint-disable-next-line consistent-return
+    setPdfData(result);
     return result;
   };
 
   const fileChange = (oneFile: SetStateAction<File | undefined>) => {
-    setLoad(0);
-    if (oneFile instanceof File) setFile(oneFile);
-    if (oneFile === undefined) setFile(undefined);
+    if (oneFile instanceof File) {
+      removeFileState();
+      setFile(oneFile);
+    }
+    if (oneFile === undefined) removeFileState();
   };
 
-  interface HTMLFileInputElement extends HTMLInputElement {
-    files: FileList;
-  }
+  const isNumber = (value: any) => {
+    if (value === null) {
+      return false;
+      // Number에서 undefined 는 NaN으로 처리 됨
+    }
+
+    const dist = Number(value);
+
+    if (Number.isNaN(dist)) {
+      return false;
+    }
+    if (!Number.isFinite(dist)) {
+      return false;
+    }
+    return true;
+  };
+
+  const valueToByte = (value: number) => {
+    if (value < 1024) return `${value}B`;
+    if (value < 1024 * 1024) return `${(value / 1024).toFixed(2)}KB`;
+    if (value < 1024 * 1024 * 1024) return `${(value / 1024 / 1024).toFixed(2)}MB`;
+    return `${(value / 1024 / 1024 / 1024).toFixed(2)}GB`;
+  };
 
   return (
-    <Globalbody>
+    <Globally>
       <PDFInputForm onSubmit={handleSubmit(onSubmit)}>
         <PDFInputInfoBox>
           <PDFInputTitle>등기부등본 파일 업로드하기</PDFInputTitle>
           <PDFInputMsg>*PDF 파일만 업로드 가능합니다.</PDFInputMsg>
-          <Progress value={load} />
+          <Progress value={(progressLoad * 100) / ProgressTotal} />
+          <div>
+            {valueToByte(progressLoad)}/{valueToByte(ProgressTotal)}
+          </div>
+          <div>
+            progressLoad / ProgressTotal:{' '}
+            {isNumber(progressLoad / ProgressTotal)
+              ? `${((progressLoad / ProgressTotal) * 100).toFixed(2)}%`
+              : '파일을 넣어주세요'}
+          </div>
           <PDFInputButton
             type="button"
             disabled={isSubmitting}
             color="#8a8a8a"
             onClick={() => {
-              setLoad(0);
+              setProgressLoad(0);
+              setProgressTotal(0);
               setFile(undefined);
             }}
           >
-            <NotoSansMedium color="#fff">리셋</NotoSansMedium>
+            <NotoSansMedium color="#fff" onClick={() => cancelRequest()}>
+              리셋
+            </NotoSansMedium>
           </PDFInputButton>
         </PDFInputInfoBox>
         <PDFInputBox>
@@ -106,7 +165,7 @@ const PDFInput = (props: Props) => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  fileChange(undefined);
+                  removeFileState();
                 }}
               >
                 <NotoSansMedium size="14px" color="#fff">
@@ -131,13 +190,13 @@ const PDFInput = (props: Props) => {
           </PDFInputButton>
         </PDFInputBox>
       </PDFInputForm>
-    </Globalbody>
+    </Globally>
   );
 };
 
 export default PDFInput;
 
-const Globalbody = styled.main`
+const Globally = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
