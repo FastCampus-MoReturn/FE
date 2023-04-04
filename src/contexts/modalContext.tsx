@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable no-multi-assign */
 /* eslint-disable import/no-mutable-exports */
 import { createContext } from 'react';
 import useModal from '@/hooks/useModal';
-import ModalPortal from '@/components/ModalPortal';
+import ModalPortal from '@/components/ui/ModalPortal';
 
 let ModalContext: any;
 const { Provider } = (ModalContext = createContext({}));
