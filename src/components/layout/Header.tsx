@@ -24,7 +24,7 @@ const HeaderWrap = styled.div`
   width: 100%;
   background-color: #f0f4ff;
   color: black;
-  box-shadow: 0 5px 10px 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.1);
   a {
     display: inline-block;
     margin: 10px 5px;

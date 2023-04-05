@@ -1,11 +1,89 @@
 import React from 'react';
 import styled from '@emotion/styled';
 import { HiCheck } from 'react-icons/hi';
+// import { useSelector } from 'react-redux';
 
 const Explanation = () => {
+  // const { pdfData... } = useSelector((state) => state.pdfData);
+  // console.log(pdfData...);
+
+  // 테스트용 데이터
+  const testData = {
+    uniqueNumber: '1357-2016-010551',
+    maxFloor: 25,
+    address: '경기도 하남시 학암동 662 위례신도시엠코타운센트로엘 제6111동 제3층 제301호',
+    owner: {
+      1: {
+        name: '유승락',
+        rank: '2',
+        share: '3분의 1',
+        ownerAddress:
+          '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
+        age: '790831-*******',
+      },
+      2: {
+        name: '이해림',
+        rank: '2',
+        share: '3분의 1',
+        ownerAddress:
+          '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
+        age: '850322-*******',
+      },
+      3: {
+        name: '이해',
+        rank: '2',
+        share: '3분의 1',
+        ownerAddress:
+          '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
+        age: '850322-*******',
+      },
+    },
+    exclusiveArea: 98.7503,
+    sumJeonse_deposit: 0,
+    jeonseAuthorityList: {},
+    mortgageCount: 1,
+    mortgageeList: {
+      '1': '주식회사하나은행',
+    },
+    sumMax_mortgageBond: 680400000,
+    pledgeCount: 0,
+    pledgeCreditorList: {},
+    sumPledge: 0,
+    attachmentCount: 0,
+    sumAncillary_Attachment: 0,
+    attachmentList: {},
+    printingDate: '202211212250',
+  };
+
+  const generateColor = () => {
+    const randomColor = Math.floor(Math.random() * 16777215)
+      .toString(16)
+      .padStart(6, '0');
+    return `#${randomColor}`;
+  };
+
+  const donutChartRender = () => {
+    const donutData = [];
+    const ownerCount = Object.keys(testData.owner).length;
+    let num = 0;
+    for (let i = 1; i <= ownerCount; i += 1) {
+      const randomColor = generateColor();
+      const str = testData.owner[i]?.share.replace(/ /g, '').split('분의').map(Number);
+
+      let res = [randomColor, num];
+      num += Math.round(100 / str[0]) * str[1];
+      res = [...res, num];
+      // console.log(res);
+      donutData.push(res);
+    }
+    console.log(donutData);
+    return donutData;
+  };
+  donutChartRender();
+
   return (
     <ExplanationArea>
-      <p>진행도 프로그레시브바 영역</p>
+      <p>(진행도 프로그레시브바 영역)</p>
       <h2>등기부등본 해석</h2>
       <Content>
         <h4>잠깐! 한번 읽어보고 가세요.</h4>
@@ -113,10 +191,10 @@ const Explanation = () => {
                 최현진<Highlight>개인</Highlight>
               </p>
               <p className="red">*실계약시 주인의 신분증을 요구해 일치 여부 확인해야 해요!</p>
-              <div>
-                <p>그래프 영역</p>
+              <DonutGraph>
+                <Donut ownerData={donutChartRender()} />
                 <p>현재 이 집은 이재현, 최현진님이 개인이 공동소유하고 있어요.</p>
-              </div>
+              </DonutGraph>
             </Right>
           </ColumnWrap>
           <ColumnWrap>
@@ -133,7 +211,7 @@ const Explanation = () => {
               <h5>주소</h5>
             </Left>
             <Right>
-              <span>이재현 : 의왕시 내손중앙로 11, 1106동 603호</span>
+              <span>이재현 : 의왕시 내손중앙로 11, 1106동 603호</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <span>최현진 : 서울 서초구 신반포로 270, 101동 502호</span>
             </Right>
           </ColumnWrap>
@@ -280,14 +358,18 @@ const Explanation = () => {
 export default Explanation;
 
 const ExplanationArea = styled.div`
+  padding: 60px;
+  max-width: 1240px;
   background-color: white;
   color: black;
   h2 {
+    padding: 44px 0;
     text-align: center;
     font-weight: 600;
     font-size: 36px;
   }
   h2 + div {
+    margin: 80px 0;
     padding: 40px;
     border-radius: 20px;
     background-color: #f5f6fa;
@@ -349,12 +431,15 @@ const CheckList = styled.ul`
       margin-right: 6px;
       align-items: center;
       justify-content: center;
-      width: 24px;
-      height: 24px;
+      min-width: 24px;
+      min-height: 24px;
       border-radius: 9999px;
       background-color: #4258d7;
       font-size: 20px;
     }
+  }
+  @media only screen and (max-width: 768px) {
+    flex-wrap: wrap;
   }
 `;
 
@@ -368,7 +453,7 @@ const ColumnWrap = styled.div`
   }
 `;
 const Left = styled.div`
-  width: 236px;
+  min-width: 236px;
   @media only screen and (max-width: 768px) {
     width: initial;
   }
@@ -394,11 +479,41 @@ const Caution = styled.div`
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  margin: 10px 0;
   margin-right: 12px;
   padding: 20px 30px;
   border-radius: 10px;
   background-color: #fff3f3;
   span {
     color: #ff5252;
+  }
+`;
+
+const DonutGraph = styled.div`
+  display: flex;
+  gap: 20px;
+  margin: 10px 0;
+  padding: 34px;
+  border-radius: 20px;
+  border: 1px solid #d2d2dc;
+`;
+
+const Donut = styled.div`
+  display: inline-block;
+  position: relative;
+  width: 120px;
+  height: 120px;
+  background: conic-gradient(#8b22ff 0% 25%, #ffc33b 25% 56%, #21f3d6 56% 100%);
+  border-radius: 50%;
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: white;
+    transform: translate(-50%, -50%);
   }
 `;

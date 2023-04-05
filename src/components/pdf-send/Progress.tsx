@@ -4,10 +4,29 @@ type Props = {
   value: number;
 };
 
+const minZero = (value: number) => {
+  // NaN과 Infinity는 0으로, 숫자는 는 그대로
+  if (value === null) {
+    return 0;
+    // Number에서 undefined 는 NaN으로 처리 됨
+  }
+
+  const dist = Number(value);
+
+  if (Number.isNaN(dist)) {
+    return 0;
+  }
+  if (!Number.isFinite(dist)) {
+    return 0;
+  }
+  return value;
+};
+
 const Index = ({ value }: Props) => {
+  console.log('내부', value);
   return (
     <Progress>
-      <Loading value={value}>{value === 100 ? 'Loading complete' : null}</Loading>
+      <Loading value={minZero(value)}>{value === 100 ? 'Loading complete' : null}</Loading>
     </Progress>
   );
 };

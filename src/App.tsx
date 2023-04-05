@@ -14,6 +14,7 @@ const App = () => {
         <Router />
         <Footer />
         <Sidebar />
+        <Sidebar />
       </BrowserRouter>
     </ModalProvider>
   );
