@@ -1,9 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
 import NotFound from '@/pages/NotFound';
 import PdfSend from '@/pages/PdfSend';
-import Commentary from '@/pages/Commentary';
 import PDFComp from '@/components/pdf-send/PDFComp';
 import InfoCheckPage from '@/pages/InfoCheckPage';
+import PdfCommentary2 from '@/pages/PdfCommentary2';
 
 const Router = () => {
   return (
@@ -11,7 +11,7 @@ const Router = () => {
       <Route path="infocheck" element={<InfoCheckPage />} />
       <Route path="pdf-send" element={<PdfSend />} />
       <Route path="pdf" element={<PDFComp />} />
-      <Route path="commentary" element={<Commentary />} />
+      <Route path="commentary" element={<PdfCommentary2 />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
