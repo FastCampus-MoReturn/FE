@@ -1,12 +1,14 @@
 import { SetStateAction } from 'react';
+import _ from 'lodash';
 
 const dragEvent = (
   isDraggingSetter: (arg0: boolean) => void,
-  cb: (list: SetStateAction<File>) => void,
+  cb: (oneFile: SetStateAction<File>) => void,
 ) => {
   const onDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('onDragEnter');
     isDraggingSetter(true);
   };
   const onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
@@ -17,9 +19,15 @@ const dragEvent = (
   const onDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.dataTransfer.files) {
-      isDraggingSetter(true);
-    }
+    _.throttle(
+      () => {
+        if (e.dataTransfer.files) {
+          isDraggingSetter(true);
+        }
+      },
+      1000,
+      { leading: true },
+    );
   };
   const onDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
