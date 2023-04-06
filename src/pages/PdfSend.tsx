@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import axios, { AxiosProgressEvent } from 'axios';
 import styled from '@emotion/styled';
 import Progress from '../components/pdf-send/Progress';
-import dragPresets from '../components/pdf-send/dragEvent';
+import dragPresets from '../components/pdf-send/step02/dragEvent';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { PDFAction } from '@/store/pdfSlice';
 
@@ -23,7 +23,12 @@ type FormValues = {
 
 const PdfSend = (props: Props) => {
   const pdfData = useAppSelector((state) => state.pdf);
-  console.log('state pdf', pdfData);
+  useEffect(() => {
+    console.log('state pdf', pdfData);
+    return () => {
+      console.log("I'm unmounting.");
+    };
+  }, [pdfData]);
 
   const controllerRef = useRef(new AbortController());
   const inputRef = useRef(null);
@@ -46,7 +51,8 @@ const PdfSend = (props: Props) => {
     controllerRef.current = new AbortController();
     console.log('File', file);
 
-    if (file instanceof File) formData.append('frm', file as File, encodeURIComponent(file.name));
+    if (file instanceof File)
+      formData.append('multipartFile', file as File, encodeURIComponent(file.name));
 
     const result = await instance
       .post('upload', formData, {

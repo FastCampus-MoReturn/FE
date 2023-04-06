@@ -21,6 +21,8 @@ type DebtorList = {
 export interface PdfState {
   uniqueNumber: string; // 등기부등본 고유번호
   maxFloor: string; //   최고층수
+  currentFloor: string; // 현재층수
+  landRightRatio: string; // 토지권비율
   address: string; // 등기부등본주소
   owner: Owners; // 소유자리스트
   exclusiveArea: number; //   전용면적
@@ -41,6 +43,8 @@ export interface PdfState {
 const initialState: PdfState = {
   uniqueNumber: '', // 등기부등본 고유번호
   maxFloor: '', //   최고층수
+  currentFloor: '', // 현재층수
+  landRightRatio: '', // 토지권비율
   address: '', // 등기부등본주소
   owner: {}, // 소유자리스트
   exclusiveArea: 0, //   전용면적
@@ -66,6 +70,8 @@ export const pdfSlice = createSlice({
       state.uniqueNumber = action.payload.uniqueNumber;
       state.maxFloor = action.payload.maxFloor;
       state.address = action.payload.address;
+      state.currentFloor = action.payload.currentFloor;
+      state.landRightRatio = action.payload.landRightRatio;
       state.owner = action.payload.owner;
       state.exclusiveArea = action.payload.exclusiveArea;
       state.SumJeonse_deposit = action.payload.SumJeonse_deposit;

@@ -8,12 +8,11 @@ import Colors from './colors';
 const style = css`
   ${reset}
   html, body {
-    background-color: ${Colors.MainBG};
+    background-color: #fff;
     color: ${Colors.Font_BL};
     font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
       Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
       'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
-
     a {
       color: ${Colors.Font_BL};
       text-decoration: none;
@@ -21,6 +20,9 @@ const style = css`
   }
   * {
     box-sizing: border-box;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+      Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
   }
 
   button {

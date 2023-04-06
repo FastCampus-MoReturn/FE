@@ -14,6 +14,7 @@ export const Pretendard = styled.span<FontProps>`
   font-style: normal;
   display: flex;
   align-items: center;
+  letter-spacing: -0.05em;
 
   font-weight: ${(props) => props.weight || 400};
   font-size: ${(props) => props.size || '16px'};

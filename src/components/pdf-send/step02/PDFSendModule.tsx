@@ -1,12 +1,14 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
 import axios, { AxiosProgressEvent } from 'axios';
 import Progress from '@/components/pdf-send/Progress';
-import dragPresets from '@/components/pdf-send/dragEvent';
+import dragPresets from '@/components/pdf-send/step02/dragEvent';
 import { useAppDispatch } from '@/store/hooks';
 import { PDFAction } from '@/store/pdfSlice';
+import { Pretendard } from '@/styles/DesignSystem';
+import COLORS from '@/styles/colors';
+import upload from '@/assets/file_upload_100px.svg';
 
 export const instance = axios.create({
   baseURL: 'https://moreturn.shop/',
@@ -21,13 +23,15 @@ type FormValues = {
   test: FormData;
 };
 
-type Props = {};
+type Props = {
+  setStep: React.Dispatch<SetStateAction<number>>;
+};
 
 interface HTMLFileInputElement extends HTMLInputElement {
   files: FileList;
 }
 
-const PDFInput = (props: Props) => {
+const PDFInput = ({ setStep }: Props) => {
   const dispatch = useAppDispatch();
   const controllerRef = useRef(new AbortController());
   const inputRef = useRef<HTMLFileInputElement>(null);
@@ -122,12 +126,9 @@ const PDFInput = (props: Props) => {
   };
 
   return (
-    <Globally>
-      <Link to="/pdf-send"> 얍 </Link>
-      <PDFInputForm onSubmit={handleSubmit(onSubmit)}>
-        <PDFInputInfoBox>
-          <PDFInputTitle>등기부등본 파일 업로드하기</PDFInputTitle>
-          <PDFInputMsg>*PDF 파일만 업로드 가능합니다.</PDFInputMsg>
+    <PDFInputForm onSubmit={handleSubmit(onSubmit)}>
+      {file ? (
+        <PDFLoadBox>
           <Progress value={(progressLoad * 100) / ProgressTotal} />
           <div>
             {valueToByte(progressLoad)}/{valueToByte(ProgressTotal)}
@@ -138,23 +139,30 @@ const PDFInput = (props: Props) => {
               ? `${((progressLoad / ProgressTotal) * 100).toFixed(2)}%`
               : '파일을 넣어주세요'}
           </div>
-          <PDFInputButton
+          <button
             type="button"
-            disabled={isSubmitting}
-            color="#8a8a8a"
             onClick={() => {
-              setProgressLoad(0);
-              setProgressTotal(0);
-              setFile(undefined);
+              cancelRequest();
+              removeFileState();
             }}
           >
-            <NotoSansMedium color="#fff" onClick={() => cancelRequest()}>
-              리셋
-            </NotoSansMedium>
-          </PDFInputButton>
-        </PDFInputInfoBox>
+            x
+          </button>
+        </PDFLoadBox>
+      ) : (
         <PDFInputBox>
+          <img src={upload} alt="upload" />
+
+          <MsgArea>
+            <Pretendard size="18px" weight={400} color={COLORS.Font_grey_02}>
+              여기로 파일을 드래그하거나 하단에 파일 선택을 통해 등기부등본을 업로드해주세요.
+            </Pretendard>
+            <Pretendard size="16px" weight={400} color={COLORS.Alert}>
+              *단일 PDF 파일만 업로드 가능합니다.
+            </Pretendard>
+          </MsgArea>
           <PDFInputLabel>
+            파일 선택
             <PDFInputComp
               type="file"
               accept="application/pdf"
@@ -164,118 +172,43 @@ const PDFInput = (props: Props) => {
                 fileChange(e.target.files[0]);
               }}
             />
-            {file ? file.name : '선택되지 않음'}
-            {file ? (
-              <DeleteButton
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  removeFileState();
-                }}
-              >
-                <NotoSansMedium size="14px" color="#fff">
-                  삭제
-                </NotoSansMedium>
-              </DeleteButton>
-            ) : null}
           </PDFInputLabel>
-          <PDFInputButton
-            type="button"
-            disabled={isSubmitting}
-            color="#8a8a8a"
-            onClick={() => {
-              if (inputRef.current === null) return;
-              inputRef.current.click();
-            }}
-          >
-            <NotoSansMedium color="#fff">파일 선택</NotoSansMedium>
-          </PDFInputButton>
-          <PDFInputButton type="submit" disabled={isSubmitting}>
-            <NotoSansMedium color="#fff">파일 제출</NotoSansMedium>
-          </PDFInputButton>
         </PDFInputBox>
-      </PDFInputForm>
-    </Globally>
+      )}
+      <PDFSubmitBtn type="submit" disabled={isSubmitting}>
+        <Pretendard size="20px" weight={600} color={COLORS.Font_grey_03}>
+          제출하기
+        </Pretendard>
+      </PDFSubmitBtn>
+    </PDFInputForm>
   );
 };
 
 export default PDFInput;
 
-const Globally = styled.main`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0px;
-  gap: 64px;
-
-  width: 100%;
-  max-width: 1240px;
-`;
-
 const PDFInputForm = styled.form`
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 64px 80px;
-
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+  gap: 60px;
+  border-radius: 30px;
   width: 100%;
-  height: 520px;
-
-  border: 1px solid #e0e0e0;
-  box-shadow: 0px 4px 5px #e6e6e6;
-  border-radius: 20px;
-
-  flex: none;
-  align-self: stretch;
-  flex-grow: 0;
-`;
-
-const PDFInputInfoBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-`;
-
-const PDFInputTitle = styled.h2`
-  font-family: 'Noto Sans KR Bold';
-
-  font-weight: 700;
-  font-size: 32px;
-  letter-spacing: -0.05em;
-
-  color: #000000;
-`;
-
-const PDFInputMsg = styled.p`
-  font-family: 'Noto Sans KR Medium';
-  font-size: 16px;
-  letter-spacing: -0.05em;
-
-  color: #ec5f59;
-`;
-
-type Text = {
-  size?: string;
-  color?: string;
-};
-
-const NotoSansMedium = styled.span<Text>`
-  font-family: 'Noto Sans KR Medium';
-  font-size: ${(props) => props.size || '16px'};
-  color: ${(props) => props.color || '#000'};
-  letter-spacing: -0.05em;
+  background: ${COLORS.BG_100};
 `;
 
 const PDFInputBox = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  gap: 25px;
   width: 100%;
-  padding: 0px;
-  gap: 32px;
+
+  background: #ffffff;
+  border: 2px dashed #d2d2dc;
+  border-radius: 20px;
 `;
 
 const PDFInputComp = styled.input`
@@ -285,48 +218,59 @@ const PDFInputComp = styled.input`
 const PDFInputLabel = styled.label`
   display: flex;
   flex-direction: row;
-  align-items: center;
-  padding: 0px 40px;
-  gap: 16px;
-
-  flex-grow: 4;
-  height: 64px;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0px 4px 5px #e6e6e6;
-  border-radius: 20px;
-`;
-
-type ColorButton = {
-  color?: string;
-};
-const PDFInputButton = styled.button<ColorButton>`
-  display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 0px;
+  gap: 10px;
 
-  flex-grow: 1;
-  height: 64px;
-  padding: 0px 16px;
-  background: ${(props) => props.color || '#1c2379'};
-  border: 1px solid #e0e0e0;
-  box-shadow: 0px 4px 5px #e6e6e6;
-  border-radius: 20px;
-
-  // 임시
-  color: #fff;
+  width: 160px;
+  height: 48px;
+  color: ${COLORS.Main};
+  border: 1px solid ${COLORS.Main};
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.05em;
 `;
 
-const DeleteButton = styled.button`
+const PDFLoadBox = styled.div`
   display: flex;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
-  width: 80px;
-  height: 36px;
+  padding: 20px;
+  gap: 20px;
 
-  background: #ec5f59;
+  width: 100%;
+
+  background: #ffffff;
+  border: 1px solid ${COLORS.BG_100};
   border-radius: 20px;
-  border: none;
+`;
+
+const MsgArea = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 10px;
+
+  width: 100%;
+`;
+
+const PDFSubmitBtn = styled.button`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 24px 0px;
+  gap: 10px;
+
+  width: 100%;
+
   outline: none;
+  border: none;
+
+  background: ${COLORS.Disable};
+  border-radius: 12px;
 `;
