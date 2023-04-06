@@ -17,10 +17,6 @@ export const instance = axios.create({
   },
 });
 
-type FormValues = {
-  test: FormData;
-};
-
 type Props = {
   setStep: React.Dispatch<SetStateAction<number>>;
 };
@@ -103,8 +99,6 @@ const PDFInputInfoBox = styled.div`
 `;
 
 const PDFInputTitle = styled.h2`
-  font-family: 'Noto Sans KR Bold';
-
   font-weight: 600;
   font-size: 36px;
   letter-spacing: -0.05em;

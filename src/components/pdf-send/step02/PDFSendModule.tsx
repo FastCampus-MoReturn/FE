@@ -93,7 +93,7 @@ const PDFInput = ({ setStep }: Props) => {
     return result;
   };
 
-  const fileChange = (oneFile: SetStateAction<File | undefined>) => {
+  const fileChange = (oneFile: SetStateAction<File>) => {
     if (oneFile instanceof File) {
       removeFileState();
       setFile(oneFile);
@@ -150,7 +150,11 @@ const PDFInput = ({ setStep }: Props) => {
           </button>
         </PDFLoadBox>
       ) : (
-        <PDFInputBox>
+        <PDFInputLoadBox
+          drag={drag}
+          className={drag ? 'dragging' : ''}
+          {...dragPresets(setDrag, fileChange)}
+        >
           <img src={upload} alt="upload" />
 
           <MsgArea>
@@ -173,7 +177,7 @@ const PDFInput = ({ setStep }: Props) => {
               }}
             />
           </PDFInputLabel>
-        </PDFInputBox>
+        </PDFInputLoadBox>
       )}
       <PDFSubmitBtn type="submit" disabled={isSubmitting}>
         <Pretendard size="20px" weight={600} color={COLORS.Font_grey_03}>
@@ -198,8 +202,13 @@ const PDFInputForm = styled.form`
   background: ${COLORS.BG_100};
 `;
 
-const PDFInputBox = styled.div`
+type DragBoxProps = {
+  drag: boolean;
+};
+
+const PDFInputLoadBox = styled.div<DragBoxProps>`
   display: flex;
+  position: relative;
   flex-direction: column;
   align-items: center;
   padding: 40px;
@@ -207,8 +216,41 @@ const PDFInputBox = styled.div`
   width: 100%;
 
   background: #ffffff;
-  border: 2px dashed #d2d2dc;
+  border: 2px dashed ${(props) => (props.drag ? COLORS.Main : COLORS.Line_200)};
   border-radius: 20px;
+
+  ::after {
+    content: '';
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    background: ${COLORS.MainBG};
+    transition: opacity 0.25s ease-in-out;
+  }
+  &.dragging::after {
+    content: '업로드할 파일을 여기에 끌어다 놓으세요.';
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+    color: ${COLORS.Main};
+    width: 100%;
+    height: 100%;
+    background: ${COLORS.MainBG};
+    border-radius: 20px;
+    opacity: 1;
+    transition: opacity 0.25s ease-in-out;
+  }
 `;
 
 const PDFInputComp = styled.input`
@@ -240,10 +282,9 @@ const PDFLoadBox = styled.div`
   align-items: center;
   padding: 20px;
   gap: 20px;
-
   width: 100%;
 
-  background: #ffffff;
+  background: #fff;
   border: 1px solid ${COLORS.BG_100};
   border-radius: 20px;
 `;

@@ -70,8 +70,8 @@ const PdfSend = (props: Props) => {
     return result;
   };
 
-  const fileChange = (list: SetStateAction<File>) => {
-    if (list instanceof File) setFile(list);
+  const fileChange = (FileList: SetStateAction<File>) => {
+    if (FileList instanceof File) setFile(FileList);
   };
 
   interface HTMLFileInputElement extends HTMLInputElement {
