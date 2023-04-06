@@ -45,6 +45,7 @@
     "react/jsx-props-no-spreading": "off",
     "no-use-before-define": "off",
     "no-console": "warn",
+    "no-param-reassign": ["error", { "props": false }],
     "react/react-in-jsx-scope": "off",
     "@typescript-eslint/ban-types": "warn",
     "import/prefer-default-export": "off",

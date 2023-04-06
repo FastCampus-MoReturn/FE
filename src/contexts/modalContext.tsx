@@ -4,16 +4,16 @@ import { createContext } from 'react';
 import useModal from '@/hooks/useModal';
 import ModalPortal from '@/components/ui/ModalPortal';
 
-let ModalContext: any;
-const { Provider } = (ModalContext = createContext({}));
+const ModalContext = createContext<any>(null);
 
 const ModalProvider = ({ children }: any) => {
   const { modal, handleModal, openModal, closeModal, modalContent } = useModal();
   return (
-    <Provider value={{ modal, handleModal, openModal, closeModal, modalContent }}>
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
+    <ModalContext.Provider value={{ modal, handleModal, openModal, closeModal, modalContent }}>
       <ModalPortal />
       {children}
-    </Provider>
+    </ModalContext.Provider>
   );
 };
 

@@ -3,16 +3,19 @@ import { css, Global } from '@emotion/react';
 import reset from 'emotion-reset';
 import styled from '@emotion/styled';
 import { ToastContainer } from 'react-toastify';
-import COLORS from './colors';
+import Colors from './colors';
 
 const style = css`
   ${reset}
   html, body {
-    background-color: #fff;
-    color: #000;
+    background-color: ${Colors.MainBG};
+    color: ${Colors.Font_BL};
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, system-ui,
+      Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+      'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
 
     a {
-      color: #000;
+      color: ${Colors.Font_BL};
       text-decoration: none;
     }
   }
@@ -66,19 +69,19 @@ export const Container = styled(ToastContainer)`
   }
 
   .Toastify__toast--info {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: ${Colors.PointBG};
+    border: 1px solid ${Colors.Point};
   }
 
   .Toastify__toast--success {
-    background-color: #fff;
-    border: 1px solid #ddd;
+    background-color: ${Colors.BG_100};
+    border: 1px solid ${Colors.Safe};
   }
 
   .Toastify__toast--error {
-    background-color: #fff;
-    border: 1px solid #ff5252;
-    color: #ff5252;
+    background-color: ${Colors.AlertBG};
+    border: 1px solid ${Colors.Alert};
+    color: ${Colors.Alert};
 
     div {
       text-align: center;

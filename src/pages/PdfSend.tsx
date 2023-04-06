@@ -4,6 +4,8 @@ import axios, { AxiosProgressEvent } from 'axios';
 import styled from '@emotion/styled';
 import Progress from '../components/pdf-send/Progress';
 import dragPresets from '../components/pdf-send/dragEvent';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { PDFAction } from '@/store/pdfSlice';
 
 export const instance = axios.create({
   baseURL: 'http://localhost:4000',
@@ -20,6 +22,9 @@ type FormValues = {
 };
 
 const PdfSend = (props: Props) => {
+  const pdfData = useAppSelector((state) => state.pdf);
+  console.log('state pdf', pdfData);
+
   const controllerRef = useRef(new AbortController());
   const inputRef = useRef(null);
   const {

@@ -1,99 +1,144 @@
-import React from 'react';
-import styled from '@emotion/styled';
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable import/no-absolute-path */
+/* eslint-disable react/no-unknown-property */
+import React, { Fragment, useEffect, useState } from 'react';
 import { HiCheck } from 'react-icons/hi';
-// import { useSelector } from 'react-redux';
+import styled from '@emotion/styled';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { PDFAction } from '@/store/pdfSlice';
+import candyIcon from '@/assets/candy.png';
+import exclaIcon from '@/assets/excla.png';
+
+// 테스트용 데이터
+// const testData = {
+//   uniqueNumber: '1357-2016-010551',
+//   maxFloor: 25,
+//   address: '경기도 하남시 학암동 662 위례신도시엠코타운센트로엘 제6111동 제3층 제301호',
+//   owner: {
+//     1: {
+//       name: '유승락',
+//       rank: '2',
+//       share: '30680분의 2167',
+//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
+//       age: '790831-*******',
+//     },
+//     2: {
+//       name: '이해림',
+//       rank: '2',
+//       share: '30680분의 6346',
+//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
+//       age: '850322-*******',
+//     },
+//     3: {
+//       name: '이름3',
+//       rank: '2',
+//       share: '30680분의 5471',
+//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
+//       age: '850322-*******',
+//     },
+//     4: {
+//       name: '이름4',
+//       rank: '2',
+//       share: '30680분의 13242',
+//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
+//       age: '850322-*******',
+//     },
+//     5: {
+//       name: '이름5',
+//       rank: '2',
+//       share: '30680분의 3454',
+//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
+//       age: '850322-*******',
+//     },
+//   },
+//   exclusiveArea: 98.7503,
+//   sumJeonse_deposit: 0,
+//   jeonseAuthorityList: {},
+//   mortgageCount: 1,
+//   mortgageeList: {
+//     '1': '주식회사하나은행',
+//   },
+//   sumMax_mortgageBond: 680400000,
+//   pledgeCount: 0,
+//   pledgeCreditorList: {},
+//   sumPledge: 0,
+//   attachmentCount: 0,
+//   sumAncillary_Attachment: 0,
+//   attachmentList: {},
+//   printingDate: '202211212250',
+// };
 
 const Explanation = () => {
-  // const { pdfData... } = useSelector((state) => state.pdfData);
-  // console.log(pdfData...);
+  const pdfData = useAppSelector((state) => state.pdf);
+  console.log('state pdf', pdfData);
+  // console.log('testData', testData);
 
-  // 테스트용 데이터
-  const testData = {
-    uniqueNumber: '1357-2016-010551',
-    maxFloor: 25,
-    address: '경기도 하남시 학암동 662 위례신도시엠코타운센트로엘 제6111동 제3층 제301호',
-    owner: {
-      1: {
-        name: '유승락',
-        rank: '2',
-        share: '3분의 1',
-        ownerAddress:
-          '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
-        age: '790831-*******',
-      },
-      2: {
-        name: '이해림',
-        rank: '2',
-        share: '3분의 1',
-        ownerAddress:
-          '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
-        age: '850322-*******',
-      },
-      3: {
-        name: '이해',
-        rank: '2',
-        share: '3분의 1',
-        ownerAddress:
-          '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
-        age: '850322-*******',
-      },
-    },
-    exclusiveArea: 98.7503,
-    sumJeonse_deposit: 0,
-    jeonseAuthorityList: {},
-    mortgageCount: 1,
-    mortgageeList: {
-      '1': '주식회사하나은행',
-    },
-    sumMax_mortgageBond: 680400000,
-    pledgeCount: 0,
-    pledgeCreditorList: {},
-    sumPledge: 0,
-    attachmentCount: 0,
-    sumAncillary_Attachment: 0,
-    attachmentList: {},
-    printingDate: '202211212250',
-  };
+  // const getOwners = () => {
+  //   const owners = Object.values(testData.owner);
+  //   return owners;
+  // };
+  // console.log(getOwners().length);
 
-  const generateColor = () => {
-    const randomColor = Math.floor(Math.random() * 16777215)
-      .toString(16)
-      .padStart(6, '0');
-    return `#${randomColor}`;
-  };
+  // const generateColor = () => {
+  //   const randomColor = Math.floor(Math.random() * 16777215)
+  //     .toString(16)
+  //     .padStart(6, '0');
+  //   return `#${randomColor}`;
+  // };
 
-  const donutChartRender = () => {
+  const colorList = ['#2337A9', '#4258D7', '#6C7DE0', '#96A3E9', '#D5DAF6', '#EAECFB'];
+  // const [randomColor, setRandomColor] = useState([]);
+  // const colorLoop = () => {
+  //   for (let i = 0; i < getOwners().length; i += 1) {
+  //     setRandomColor((randomColor) => [...randomColor, generateColor()]);
+  //   }
+  // };
+  // useEffect(() => {
+  //   colorLoop();
+  // }, []);
+
+  const donutChartRender = (data: { [s: string | number]: unknown } | ArrayLike<unknown>) => {
+    console.log(data);
     const donutData = [];
-    const ownerCount = Object.keys(testData.owner).length;
+    const ownerCount = Object.values(data).length;
     let num = 0;
     for (let i = 1; i <= ownerCount; i += 1) {
-      const randomColor = generateColor();
-      const str = testData.owner[i]?.share.replace(/ /g, '').split('분의').map(Number);
+      const str = data[i]?.share;
 
-      let res = [randomColor, num];
-      num += Math.round(100 / str[0]) * str[1];
-      res = [...res, num];
-      // console.log(res);
+      let res = [colorList[i - 1], `${num}%`];
+      num += Math.round(100 * str);
+      res = [...res, `${num}%`];
+      res = [res.join(' ')];
       donutData.push(res);
     }
-    console.log(donutData);
-    return donutData;
+    const resData = donutData.join(',');
+    return resData;
   };
-  donutChartRender();
 
   return (
     <ExplanationArea>
       <p>(진행도 프로그레시브바 영역)</p>
       <h2>등기부등본 해석</h2>
       <Content>
-        <h4>잠깐! 한번 읽어보고 가세요.</h4>
+        <h4>
+          <img src={candyIcon} alt="아이콘" />
+          등기부등본 보기전 한번 읽어보고 가세요.
+        </h4>
         <p>
-          등기부등본은 크게 표제부, 갑구, 을구로 구성돼요. <br /> 계약 중에는 표제부를 열심히
-          봐주세요! 계약 전에는 갑구와 을구를 꼼꼼하게 살펴주세요. <br /> 빨간줄은 이미 지나간
-          내용이니 참고하지 않으셔도 됩니다.
+          <HiCheck className="red" size="24" />
+          등기부등본은 크게 표제부, 갑구, 을구로 구성돼요.
+        </p>
+        <p>
+          <HiCheck className="red" size="24" />
+          <b>계약 중</b>에는 <b>표제부</b>를 열심히 봐주세요! <b>계약 전</b>에는 <b>갑구와 을구</b>
+          를 꼼꼼하게 살펴주세요.
+        </p>
+        <p>
+          <HiCheck className="red" size="24" />
+          빨간줄은 이미 지나간 내용이니 참고하지 않으셔도 됩니다.
         </p>
       </Content>
-      <Content>
+      <Content style={{ padding: '60px' }}>
         <h3>업로드 등기부등본 들여다보기</h3>
         <div>
           <h4>표제부</h4>
@@ -112,12 +157,6 @@ const Explanation = () => {
               <span>
                 <HiCheck className="white" />
               </span>
-              층과 호수(건물번호)
-            </li>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
               소유할 지분(대지권 비율)
             </li>
           </CheckList>
@@ -126,15 +165,7 @@ const Explanation = () => {
               <h5>소재지번, 건물명칭 및 번호</h5>
             </Left>
             <Right>
-              <p>서울특별시 강남구 삼성동 87 아이파크 삼성동</p>
-            </Right>
-          </ColumnWrap>
-          <ColumnWrap>
-            <Left>
-              <h5>건물번호</h5>
-            </Left>
-            <Right>
-              <p>제 22층 제 2202호</p>
+              <p>{pdfData.address}</p>
             </Right>
           </ColumnWrap>
           <ColumnWrap>
@@ -178,22 +209,52 @@ const Explanation = () => {
               </span>
               등기목적(소유권현황)
             </li>
+            <li>
+              <span>
+                <HiCheck className="white" />
+              </span>
+              등기원인(날짜, 원인)
+            </li>
           </CheckList>
           <ColumnWrap>
             <Left>
               <h5>소유자</h5>
             </Left>
             <Right>
-              <p>
-                이재현<Highlight>개인</Highlight>
+              {Object.values(pdfData.owner).map((owner, i) => {
+                return (
+                  <p key={i}>
+                    {owner.name}
+                    <Highlight>개인</Highlight>
+                  </p>
+                );
+              })}
+              <p className="red">
+                <img src={exclaIcon} alt="아이콘" />
+                실계약시 주인의 신분증을 요구해 일치 여부 확인해야 해요!
               </p>
-              <p>
-                최현진<Highlight>개인</Highlight>
-              </p>
-              <p className="red">*실계약시 주인의 신분증을 요구해 일치 여부 확인해야 해요!</p>
               <DonutGraph>
-                <Donut ownerData={donutChartRender()} />
-                <p>현재 이 집은 이재현, 최현진님이 개인이 공동소유하고 있어요.</p>
+                <Donut ownerData={donutChartRender(pdfData.owner)} />
+                <div style={{ flex: 1 }}>
+                  <p>
+                    현재 이 집은{` `}
+                    {Object.values(pdfData.owner).map((owner, i) => {
+                      return <Fragment key={i}>{owner.name} </Fragment>;
+                    })}
+                    님 개인이 {Object.values(pdfData.owner).length > 1 ? '공동' : '단독'}소유하고
+                    있어요.
+                  </p>
+                  <NameBox>
+                    {Object.values(pdfData.owner).map((owner, i) => {
+                      return (
+                        <p key={i}>
+                          <UserColor ownerColor={colorList[i]} />
+                          {owner.name}
+                        </p>
+                      );
+                    })}
+                  </NameBox>
+                </div>
               </DonutGraph>
             </Right>
           </ColumnWrap>
@@ -202,8 +263,13 @@ const Explanation = () => {
               <h5>주민/사업자 등록번호</h5>
             </Left>
             <Right>
-              <span>이재현 : 671108-******</span>
-              <span>최현진 : 671108-******</span>
+              {Object.values(pdfData.owner).map((owner, i) => {
+                return (
+                  <span key={i}>
+                    {owner.name}: {owner.age}
+                  </span>
+                );
+              })}
             </Right>
           </ColumnWrap>
           <ColumnWrap>
@@ -211,8 +277,13 @@ const Explanation = () => {
               <h5>주소</h5>
             </Left>
             <Right>
-              <span>이재현 : 의왕시 내손중앙로 11, 1106동 603호</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <span>최현진 : 서울 서초구 신반포로 270, 101동 502호</span>
+              {Object.values(pdfData.owner).map((owner, i) => {
+                return (
+                  <p key={i}>
+                    {owner.name}: {owner.ownerAddress}
+                  </p>
+                );
+              })}
             </Right>
           </ColumnWrap>
           <ColumnWrap>
@@ -223,16 +294,17 @@ const Explanation = () => {
               <p>없음</p>
               <div>
                 <Caution>
-                  누적 가압류 <span>1회</span>
-                </Caution>
-                <Caution>
-                  누적 압류 <span>5회</span>
+                  누적압류 <span>{pdfData.attachmentCount}회</span>
                 </Caution>
               </div>
               <p className="red">
-                *이 아파트는 총1 번의 가압류, 5번의 압류를 거쳐 현재는 이재현, 최현진님이 소유권을
-                가지고있어요. <br /> 혹시모를 분쟁의 소지가 있는지 등기목적을 좀 더 꼼꼼히
-                확인해주세요!
+                <img src={exclaIcon} alt="아이콘" />이 곳은 총 {pdfData.attachmentCount}회의
+                누적압류를 거쳐 현재는{' '}
+                {Object.values(pdfData.owner).map((owner, i) => {
+                  return <Fragment key={i}>{owner.name} </Fragment>;
+                })}
+                님이 소유권을 가지고있어요. <br /> 혹시모를 분쟁의 소지가 있는지 등기목적을 좀 더
+                꼼꼼히 확인해주세요!
               </p>
             </Right>
           </ColumnWrap>
@@ -256,19 +328,25 @@ const Explanation = () => {
               <span>
                 <HiCheck className="white" />
               </span>
-              채권최고액
+              담보총액(채권최고액 합)
             </li>
-            <li>
+            {/* <li>
               <span>
                 <HiCheck className="white" />
               </span>
               채무자정보
-            </li>
+            </li> */}
             <li>
               <span>
                 <HiCheck className="white" />
               </span>
               근저당권자 정보
+            </li>
+            <li>
+              <span>
+                <HiCheck className="white" />
+              </span>
+              전세권자 정보
             </li>
           </CheckList>
           <ColumnWrap>
@@ -278,77 +356,126 @@ const Explanation = () => {
             <Right>
               <p>근저당권설정</p>
               <div>
-                <div>
-                  누적 근저당 기록 <span>8회</span>
-                </div>
+                <Caution>
+                  누적 근저당 <span>{pdfData.mortgageCount}회</span>
+                </Caution>
               </div>
               <p className="red">
-                *이 아파트는 총 8번의 근저당권설정 기록이 있어요! 근저당 기록이 많을 경우 거래에
-                주의해주세요.
+                <img src={exclaIcon} alt="아이콘" />이 곳은 총 {pdfData.mortgageCount}번의
+                근저당권설정 기록이 있어요! 근저당 기록이 많을 경우 거래에 주의해주세요.
               </p>
             </Right>
           </ColumnWrap>
           <ColumnWrap>
             <Left>
-              <h5>채권최고액</h5>
+              <h5>담보총액(채권최고액 합)</h5>
             </Left>
             <Right>
-              <p>금 910,000,000 원</p>
-              <p className="gray">
+              <p>금 {(pdfData.sumMax_mortgageBond + pdfData.sumPledge).toLocaleString()} 원</p>
+              <p className="gray" style={{ fontSize: '16px' }}>
                 채권최고액은 실제 채권액보다 평균 약 20%정도 더 높은 금액으로 설정되어, 실제
                 채권액과 다를 수 있습니다.
               </p>
-              <p>
-                *채권최고액(실제 채권액보다 약 20% 높은 금액)이 너무 높거나 근저당 기록이 많은 경우
-                거래에 주의해야해요.
-              </p>
-              <p>그래프 영역</p>
             </Right>
           </ColumnWrap>
-          <ColumnWrap>
+          {/* <ColumnWrap>
             <Left>
               <h5>채무자</h5>
             </Left>
             <Right>
               <p>김주몽</p>
             </Right>
-          </ColumnWrap>
-          <ColumnWrap>
+          </ColumnWrap> */}
+          {/* <ColumnWrap>
             <Left>
               <h5>주소</h5>
             </Left>
             <Right>
               <p>서울특별시 강남구 영동대로 640, 사우스윙동 2202호</p>
             </Right>
-          </ColumnWrap>
+          </ColumnWrap> */}
           <ColumnWrap>
             <Left>
               <h5>근저당권자</h5>
             </Left>
             <Right>
-              <p>이재현 최현진</p>
-              {/* 그래프 */}
+              {Object.values(pdfData.mortgageeList).length > 0 ? (
+                <>
+                  <p>
+                    {Object.values(pdfData.mortgageeList).map((mortgagee, i) => {
+                      return <span key={i}>{mortgagee} </span>;
+                    })}
+                  </p>
+                  <p className="red">
+                    <img src={exclaIcon} alt="아이콘" />
+                    근저당권자가 은행이 아닌 대부업체나 개인일 경우, 부실채권이 있을 수 있으니
+                    주의해주세요!
+                  </p>
+                  <Caution>
+                    근저당권자 <span>총{Object.values(pdfData.mortgageeList).length}명</span>
+                  </Caution>
+                </>
+              ) : (
+                '없음'
+              )}
             </Right>
           </ColumnWrap>
-          <ColumnWrap>
+          {/* <ColumnWrap>
             <Left>
               <h5>주민/사업자 등록번호</h5>
             </Left>
             <Right>
-              <p>이재현 : 671108-******</p>
-              <p>최현진 : 671108-******</p>
+              <span>이재현 : 671108-******</span>
+              <span>최현진 : 671108-******</span>
             </Right>
-          </ColumnWrap>
-          <ColumnWrap>
+          </ColumnWrap> */}
+          {/* <ColumnWrap>
             <Left>
               <h5>주소</h5>
             </Left>
             <Right>
-              <p>이재현 : 의왕시 내손중앙로 11, 1106동 603호</p>
-              <p>최현진 : 서울 서초구 신반포로 270, 101동 502호</p>
+              <span>이재현 : 의왕시 내손중앙로 11, 1106동 603호</span>
+              <span>최현진 : 서울 서초구 신반포로 270, 101동 502호</span>
               <p className="red">*근저당 기록이 많을 경우 거래에 주의해주세요!</p>
             </Right>
+          </ColumnWrap> */}
+          <ColumnWrap>
+            <Left>
+              <h5>전세권자</h5>
+            </Left>
+            <Right>
+              {Object.values(pdfData.jeonseAuthorityList).length > 0 ? (
+                <>
+                  <p>
+                    {Object.values(pdfData.jeonseAuthorityList).map((jeonseAuthority, i) => {
+                      return <span key={i}>{jeonseAuthority} </span>;
+                    })}
+                  </p>
+                  <Caution>
+                    전세권자 <span>총{Object.values(pdfData.jeonseAuthorityList).length}명</span>
+                  </Caution>
+                </>
+              ) : (
+                '없음'
+              )}
+            </Right>
           </ColumnWrap>
+          {/* <ColumnWrap>
+            <Left>
+              <h5>주민/사업자 등록번호</h5>
+            </Left>
+            <Right>
+              <p>110111-6035722</p>
+            </Right>
+          </ColumnWrap> */}
+          {/* <ColumnWrap>
+            <Left>
+              <h5>주소</h5>
+            </Left>
+            <Right>
+              <p>서울특별시 강남구 테헤란로25길 34, 402호</p>
+            </Right>
+          </ColumnWrap> */}
         </div>
       </Content>
     </ExplanationArea>
@@ -358,7 +485,6 @@ const Explanation = () => {
 export default Explanation;
 
 const ExplanationArea = styled.div`
-  padding: 60px;
   max-width: 1240px;
   background-color: white;
   color: black;
@@ -372,16 +498,28 @@ const ExplanationArea = styled.div`
     margin: 80px 0;
     padding: 40px;
     border-radius: 20px;
-    background-color: #f5f6fa;
+    background-color: #fff3f3;
+    h4 {
+      padding-top: initial;
+      color: #ff5252;
+    }
     p {
       line-height: 30px;
       font-size: 20px;
+      vertical-align: text-bottom;
+    }
+    b {
+      font-weight: 600;
+    }
+    svg {
+      margin-right: 8px;
+      vertical-align: middle;
     }
   }
   h3 {
     margin: 20px 0;
     border-bottom: 1px solid #d2d2dc;
-    line-height: 100px;
+    line-height: 90px;
     font-weight: 600;
     font-size: 30px;
   }
@@ -406,6 +544,10 @@ const ExplanationArea = styled.div`
     line-height: 24px;
     color: #ff5252;
   }
+  img {
+    margin-right: 8px;
+    vertical-align: middle;
+  }
 `;
 
 const Content = styled.div`
@@ -415,7 +557,7 @@ const Content = styled.div`
 `;
 
 const CheckList = styled.ul`
-  margin: 20px 0;
+  margin: 20px 0 36px;
   display: flex;
   gap: 20px;
   padding: 20px;
@@ -445,7 +587,7 @@ const CheckList = styled.ul`
 
 const ColumnWrap = styled.div`
   display: flex;
-  margin: 40px 0;
+  margin: 26px 0;
   line-height: 40px;
   @media only screen and (max-width: 768px) {
     flex-direction: column;
@@ -453,24 +595,34 @@ const ColumnWrap = styled.div`
   }
 `;
 const Left = styled.div`
-  min-width: 236px;
+  min-width: 276px;
   @media only screen and (max-width: 768px) {
     width: initial;
   }
 `;
 const Right = styled.div`
+  width: 100%;
   font-size: 18px;
+  span {
+    margin-right: 40px;
+    &:last-child {
+      margin-right: 0;
+    }
+  }
+  .red {
+    font-size: 16px;
+  }
 `;
 
 const Highlight = styled.span`
   display: inline-flex;
   align-items: center;
-  margin: 0 4px;
+  margin: 0 8px;
   padding: 2px 8px;
   height: 24px;
   border-radius: 0 10px;
   background-color: #f0f4ff;
-  font-weight: 600;
+  font-weight: 800;
   font-size: 14px;
   color: #4258d7;
 `;
@@ -485,17 +637,23 @@ const Caution = styled.div`
   border-radius: 10px;
   background-color: #fff3f3;
   span {
+    margin-left: 8px;
+    font-weight: 600;
+    font-size: 24px;
     color: #ff5252;
   }
 `;
 
 const DonutGraph = styled.div`
   display: flex;
-  gap: 20px;
-  margin: 10px 0;
-  padding: 34px;
+  align-items: center;
+  column-gap: 40px;
+  margin: 16px 0;
+  padding: 24px;
   border-radius: 20px;
-  border: 1px solid #d2d2dc;
+  p {
+    line-height: 27px;
+  }
 `;
 
 const Donut = styled.div`
@@ -503,7 +661,8 @@ const Donut = styled.div`
   position: relative;
   width: 120px;
   height: 120px;
-  background: conic-gradient(#8b22ff 0% 25%, #ffc33b 25% 56%, #21f3d6 56% 100%);
+  background: ${({ ownerColor }) => ownerColor || '#EAECFB'};
+  background: conic-gradient(${({ ownerData }) => ownerData || '#EAECFB'});
   border-radius: 50%;
   &::after {
     content: '';
@@ -516,4 +675,28 @@ const Donut = styled.div`
     background-color: white;
     transform: translate(-50%, -50%);
   }
+`;
+
+const NameBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  max-height: 66px;
+  font-size: 14px;
+  color: #767676;
+  p {
+    display: flex;
+    align-items: center;
+    line-height: 22px;
+  }
+`;
+
+const UserColor = styled.span`
+  display: inline-block;
+  margin-right: 10px !important;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: ${({ ownerColor }) => ownerColor || '#EAECFB'};
 `;

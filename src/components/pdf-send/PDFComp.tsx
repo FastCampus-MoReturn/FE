@@ -1,9 +1,12 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import axios, { AxiosProgressEvent } from 'axios';
 import Progress from '@/components/pdf-send/Progress';
 import dragPresets from '@/components/pdf-send/dragEvent';
+import { useAppDispatch } from '@/store/hooks';
+import { PDFAction } from '@/store/pdfSlice';
 
 export const instance = axios.create({
   baseURL: 'https://moreturn.shop/',
@@ -25,6 +28,7 @@ interface HTMLFileInputElement extends HTMLInputElement {
 }
 
 const PDFInput = (props: Props) => {
+  const dispatch = useAppDispatch();
   const controllerRef = useRef(new AbortController());
   const inputRef = useRef<HTMLFileInputElement>(null);
   const {
@@ -80,7 +84,8 @@ const PDFInput = (props: Props) => {
         return err;
       });
     // eslint-disable-next-line consistent-return
-    setPdfData(result);
+    setPdfData(result.data.data);
+    dispatch(PDFAction(result.data.data));
     return result;
   };
 
@@ -118,6 +123,8 @@ const PDFInput = (props: Props) => {
 
   return (
     <Globally>
+      <Link to="/pdf-send"> 얍 </Link>
+      <Link to="/explanation"> explanation페이지로 이동 ▷</Link>
       <PDFInputForm onSubmit={handleSubmit(onSubmit)}>
         <PDFInputInfoBox>
           <PDFInputTitle>등기부등본 파일 업로드하기</PDFInputTitle>
