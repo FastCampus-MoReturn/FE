@@ -26,9 +26,9 @@ const PdfStep = (props: Props) => {
       case 1:
         return <PDFComp setStep={setStep} />;
       case 2:
-        return <Navigate to="/pdf-send" />;
+        return <Navigate to="/commentary" />;
       default:
-        return <Step02 setStep={setStep} />;
+        return <Navigate to="/" />;
     }
   };
   return (

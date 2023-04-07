@@ -122,7 +122,7 @@ const PDFInput = ({ setStep }: Props) => {
     if (result.data.success) {
       setPdfData(result.data.data);
       dispatch(PDFAction(result.data.data));
-      setTimeout(() => navigate('/commentary'), 1000);
+      setTimeout(() => setStep((state) => state + 1), 1000);
     } else {
       setTotalCount(4);
       alert(result.data.message);
