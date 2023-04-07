@@ -33,3 +33,7 @@ export const error = async () => {
     return toast.error('잘못된 파일 형식입니다 PDF형식만 업로드 가능합니다.', { ...toastOptions });
   }
 };
+
+export const errorMessage = (message: string) => {
+  return toast.error(message, toastOptions);
+};

@@ -1,5 +1,6 @@
 import { SetStateAction } from 'react';
 import _ from 'lodash';
+import { errorMessage } from '@/apis/auth';
 
 const dragEvent = (
   isDraggingSetter: (arg0: boolean) => void,
@@ -37,7 +38,7 @@ const dragEvent = (
       // image/jpeg, image/png, image/gif, application/pdf
 
       if (file.type !== 'application/pdf') {
-        alert('pdf 파일만 업로드 가능합니다');
+        errorMessage('pdf 파일만 업로드 가능합니다');
         return false;
       }
       return true;
@@ -45,11 +46,11 @@ const dragEvent = (
     // 파일 하나만 업로드하도록 제한
 
     if (files.length > 1) {
-      alert(`한 개 이상의 파일이 선택되어
+      errorMessage(`한 개 이상의 파일이 선택되어
 "${files[0].name}"
 파일만 업로드 되었습니다`);
     } else if (files.length === 0) {
-      alert(`pdf 파일이 선택되지 않았습니다`);
+      errorMessage(`pdf 파일이 선택되지 않았습니다`);
       isDraggingSetter(false);
       return;
     }

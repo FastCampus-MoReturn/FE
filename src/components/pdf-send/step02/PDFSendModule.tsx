@@ -14,6 +14,7 @@ import pdf72px from '@/assets/pdf_72px.svg';
 import cautionIcon from '@/assets/caution_circle_36px.svg';
 import checkIcon from '@/assets/check_circle_36px.svg';
 import closeIcon from '@/assets/close_circle_36px.svg';
+import { errorMessage } from '@/apis/auth';
 
 export const instance = axios.create({
   baseURL: 'https://moreturn.shop/',
@@ -93,7 +94,7 @@ const PDFInput = ({ setStep }: Props) => {
 
   // 전송 과정( 전송 중임을 인식하기 위해 async 을 선언함 )
   const onSubmit = async () => {
-    if (file === undefined) return alert('파일을 넣어주세요');
+    if (file === undefined) return errorMessage('파일을 넣어주세요');
     setTotalCount(1);
 
     // const formData = new FormData();
@@ -125,7 +126,7 @@ const PDFInput = ({ setStep }: Props) => {
       setTimeout(() => setStep((state) => state + 1), 1000);
     } else {
       setTotalCount(4);
-      alert(result.data.message);
+      errorMessage(result.data.message);
     }
 
     return result;
@@ -241,7 +242,7 @@ const PDFInput = ({ setStep }: Props) => {
                 if (e.target.files.length === 0) return;
 
                 if (e.target.files[0].type !== 'application/pdf') {
-                  alert('pdf 파일만 가능합니다');
+                  errorMessage('pdf 파일만 가능합니다');
                   e.target.value = '';
                   return;
                 }
