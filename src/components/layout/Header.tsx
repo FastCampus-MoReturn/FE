@@ -12,7 +12,7 @@ const Header = () => {
               <img src={logo} alt="logo" />
             </Link>
           </h1>
-          <Link to="/pdf">등기부등본업로드</Link>
+          <Link to="/step">등기부등본업로드</Link>
           <Link to="/dictionary">용어사전 바로가기</Link>
         </div>
         <div>
