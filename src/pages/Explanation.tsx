@@ -1,112 +1,32 @@
+/* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable import/no-absolute-path */
 /* eslint-disable react/no-unknown-property */
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { Fragment } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import styled from '@emotion/styled';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { PDFAction } from '@/store/pdfSlice';
+import { useAppSelector } from '@/store/hooks';
 import candyIcon from '@/assets/candy.png';
 import exclaIcon from '@/assets/excla.png';
+import CheckList from '@/components/explanation/CheckList';
 
-// 테스트용 데이터
-// const testData = {
-//   uniqueNumber: '1357-2016-010551',
-//   maxFloor: 25,
-//   address: '경기도 하남시 학암동 662 위례신도시엠코타운센트로엘 제6111동 제3층 제301호',
-//   owner: {
-//     1: {
-//       name: '유승락',
-//       rank: '2',
-//       share: '30680분의 2167',
-//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
-//       age: '790831-*******',
-//     },
-//     2: {
-//       name: '이해림',
-//       rank: '2',
-//       share: '30680분의 6346',
-//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
-//       age: '850322-*******',
-//     },
-//     3: {
-//       name: '이름3',
-//       rank: '2',
-//       share: '30680분의 5471',
-//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
-//       age: '850322-*******',
-//     },
-//     4: {
-//       name: '이름4',
-//       rank: '2',
-//       share: '30680분의 13242',
-//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
-//       age: '850322-*******',
-//     },
-//     5: {
-//       name: '이름5',
-//       rank: '2',
-//       share: '30680분의 3454',
-//       ownerAddress: '경기도 하남시 위례광장로 265, 6111동 301호(학암동,위례신도시엠코타운센트로엘)',
-//       age: '850322-*******',
-//     },
-//   },
-//   exclusiveArea: 98.7503,
-//   sumJeonse_deposit: 0,
-//   jeonseAuthorityList: {},
-//   mortgageCount: 1,
-//   mortgageeList: {
-//     '1': '주식회사하나은행',
-//   },
-//   sumMax_mortgageBond: 680400000,
-//   pledgeCount: 0,
-//   pledgeCreditorList: {},
-//   sumPledge: 0,
-//   attachmentCount: 0,
-//   sumAncillary_Attachment: 0,
-//   attachmentList: {},
-//   printingDate: '202211212250',
-// };
+type donutDataType = { [key: number]: { [key: string]: string } };
 
 const Explanation = () => {
   const pdfData = useAppSelector((state) => state.pdf);
   console.log('state pdf', pdfData);
-  // console.log('testData', testData);
-
-  // const getOwners = () => {
-  //   const owners = Object.values(testData.owner);
-  //   return owners;
-  // };
-  // console.log(getOwners().length);
-
-  // const generateColor = () => {
-  //   const randomColor = Math.floor(Math.random() * 16777215)
-  //     .toString(16)
-  //     .padStart(6, '0');
-  //   return `#${randomColor}`;
-  // };
 
   const colorList = ['#2337A9', '#4258D7', '#6C7DE0', '#96A3E9', '#D5DAF6', '#EAECFB'];
-  // const [randomColor, setRandomColor] = useState([]);
-  // const colorLoop = () => {
-  //   for (let i = 0; i < getOwners().length; i += 1) {
-  //     setRandomColor((randomColor) => [...randomColor, generateColor()]);
-  //   }
-  // };
-  // useEffect(() => {
-  //   colorLoop();
-  // }, []);
 
-  const donutChartRender = (data: { [s: string | number]: unknown } | ArrayLike<unknown>) => {
-    console.log(data);
+  const donutChartRender = (data: donutDataType) => {
     const donutData = [];
     const ownerCount = Object.values(data).length;
     let num = 0;
     for (let i = 1; i <= ownerCount; i += 1) {
-      const str = data[i]?.share;
+      const str = data[i].share;
 
       let res = [colorList[i - 1], `${num}%`];
-      num += Math.round(100 * str);
+      num += Math.round(100 * +str);
       res = [...res, `${num}%`];
       res = [res.join(' ')];
       donutData.push(res);
@@ -138,7 +58,7 @@ const Explanation = () => {
           빨간줄은 이미 지나간 내용이니 참고하지 않으셔도 됩니다.
         </p>
       </Content>
-      <Content style={{ padding: '60px' }}>
+      <Content style={{ padding: '40px' }}>
         <h3>업로드 등기부등본 들여다보기</h3>
         <div>
           <h4>표제부</h4>
@@ -146,20 +66,9 @@ const Explanation = () => {
             표제부는 대상물의 표시에 대한 사항을 나타내요. 투자하고자하는 주소와 표제부 상단에
             기록된 주소 및 호수가 일치하는지 꼭 확인해주세요!
           </p>
-          <CheckList>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              주소지(소재지번, 건물명칭 및 번호)일치
-            </li>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              소유할 지분(대지권 비율)
-            </li>
-          </CheckList>
+          <CheckList
+            checkList={['주소지(소재지번, 건물명칭 및 번호)일치', '소유할 지분(대지권 비율)']}
+          />
           <ColumnWrap>
             <Left>
               <h5>소재지번, 건물명칭 및 번호</h5>
@@ -184,38 +93,15 @@ const Explanation = () => {
             일치하는지 확인할 수 있어요. 등기한 순서대로 기록되기 때문에 현재 부동산의 주인은 마지막
             부분에서 확인가능해요.
           </p>
-          <CheckList>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              소유자 이름
-            </li>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              소유자 주민/사업자번호
-            </li>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              소유자 주소
-            </li>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              등기목적(소유권현황)
-            </li>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              등기원인(날짜, 원인)
-            </li>
-          </CheckList>
+          <CheckList
+            checkList={[
+              '소유자 이름',
+              '소유자 주민/사업자번호',
+              '소유자 주소',
+              '등기목적(소유권현황)',
+              '등기원인(날짜, 원인)',
+            ]}
+          />
           <ColumnWrap>
             <Left>
               <h5>소유자</h5>
@@ -317,38 +203,15 @@ const Explanation = () => {
             그어져 있다면 대출을 갚았다는 뜻이예요. 대출이 남아 있는 경우엔 선이 그어지지 않은
             상태로 채권최고액과 근저당권자(돈을 빌려준사람, 은행) 및 채무자가 기록되어 있어요.
           </p>
-          <CheckList>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              등기목적
-            </li>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              담보총액(채권최고액 합)
-            </li>
-            {/* <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              채무자정보
-            </li> */}
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              근저당권자 정보
-            </li>
-            <li>
-              <span>
-                <HiCheck className="white" />
-              </span>
-              전세권자 정보
-            </li>
-          </CheckList>
+          <CheckList
+            checkList={[
+              '등기목적',
+              '담보총액(채권최고액 합)',
+              '채무자정보',
+              '근저당권자 정보',
+              '전세권자 정보',
+            ]}
+          />
           <ColumnWrap>
             <Left>
               <h5>등기목적</h5>
@@ -495,7 +358,7 @@ const ExplanationArea = styled.div`
     font-size: 36px;
   }
   h2 + div {
-    margin: 80px 0;
+    margin-bottom: 50px;
     padding: 40px;
     border-radius: 20px;
     background-color: #fff3f3;
@@ -518,13 +381,13 @@ const ExplanationArea = styled.div`
   }
   h3 {
     margin: 20px 0;
-    border-bottom: 1px solid #d2d2dc;
+    border-bottom: 1px solid black;
     line-height: 90px;
     font-weight: 600;
     font-size: 30px;
   }
   h4 {
-    padding-top: 40px;
+    padding-top: 50px;
     padding-bottom: 20px;
     font-weight: 600;
     font-size: 24px;
@@ -552,36 +415,7 @@ const ExplanationArea = styled.div`
 
 const Content = styled.div`
   & > div {
-    margin-bottom: 60px;
-  }
-`;
-
-const CheckList = styled.ul`
-  margin: 20px 0 36px;
-  display: flex;
-  gap: 20px;
-  padding: 20px;
-  width: fit-content;
-  border-radius: 12px;
-  background-color: #eaedf8;
-  li {
-    display: flex;
-    align-items: center;
-    color: #4258d7;
-    span {
-      display: inline-flex;
-      margin-right: 6px;
-      align-items: center;
-      justify-content: center;
-      min-width: 24px;
-      min-height: 24px;
-      border-radius: 9999px;
-      background-color: #4258d7;
-      font-size: 20px;
-    }
-  }
-  @media only screen and (max-width: 768px) {
-    flex-wrap: wrap;
+    margin-bottom: 100px;
   }
 `;
 
@@ -656,7 +490,7 @@ const DonutGraph = styled.div`
   }
 `;
 
-const Donut = styled.div`
+const Donut = styled.div<{ ownerData?: string; ownerColor?: string }>`
   display: inline-block;
   position: relative;
   width: 120px;
@@ -692,7 +526,7 @@ const NameBox = styled.div`
   }
 `;
 
-const UserColor = styled.span`
+const UserColor = styled.span<{ ownerColor: string }>`
   display: inline-block;
   margin-right: 10px !important;
   width: 12px;
