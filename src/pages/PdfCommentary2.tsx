@@ -1,28 +1,37 @@
-import ContentsBox from '@/components/common/ContentsBox';
+import { useState, useEffect } from 'react';
+import InfoCheck from '@/components/Commentary//InfoCheck';
+import ValuationCheck from '@/components/Commentary//ValuationCheck';
+import ValuationChartContainer from '@/components/Commentary//ValuationChartContainer';
+import AdditionalFeatures from '@/components/Commentary/AdditionalFeatures';
 
-type Props = {};
+const PdfCommentary2 = () => {
+  const address = '서울특별시 구로구 경인로 70';
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
 
-const PdfCommentary2 = (props: Props) => {
+  useEffect(() => {
+    console.log(address, x, y);
+
+    // 주소-좌표 변환 객체를 생성합니다
+    const geocoder = new kakao.maps.services.Geocoder();
+
+    // 주소로 좌표를 검색합니다
+    geocoder.addressSearch(address, function (result) {
+      // 정상적으로 검색이 완료됐으면
+      setY(parseFloat(result[0].y));
+      setX(parseFloat(result[0].x));
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log(x, y);
+  }, [x, y]);
   return (
     <>
-      <div className="title"> 담보물 평가 확인하기 </div>
-      <hr />
-      <div className="container">
-        <div className="valuation">
-          <span className="valuationText">KB시세</span>
-          <span className="infoButton">?</span>
-          <span className="KBValuation">
-            <ul>KB시세 확인하러 가기</ul>
-          </span>
-        </div>
-
-        <div className="actualTransaction">
-          <span className="transactionText">실거래가</span>
-          <span className="infoButton">?</span>
-          <ContentsBox text="실거래가 최고" num="56억" />
-          <ContentsBox text="실거래가 최저" num="25억" />
-        </div>
-      </div>
+      <InfoCheck />
+      <ValuationCheck x={x} y={y} />
+      <ValuationChartContainer />
+      <AdditionalFeatures x={x} y={y} />
     </>
   );
 };
