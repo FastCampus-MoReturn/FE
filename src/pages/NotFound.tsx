@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useContext } from 'react';
 import { ModalContext } from '@/contexts/modalContext';
 import { error } from '@/apis/auth';

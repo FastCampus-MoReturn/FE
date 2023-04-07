@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 
@@ -26,7 +25,7 @@ const SidebarWrap = styled.div`
   background-color: white;
   border-radius: 10px;
   text-align: center;
-  box-shadow: 0 5px 10px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 15px 0px rgba(0, 0, 0, 0.1);
   a {
     display: block;
     padding: 20px;
@@ -35,6 +34,10 @@ const SidebarWrap = styled.div`
     color: gray;
     &:last-child {
       border: none;
+    }
+    &:hover {
+      font-weight: bold;
+      color: black;
     }
   }
 `;
