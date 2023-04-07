@@ -4,9 +4,8 @@ import ValuationCheck from '@/components/Commentary//ValuationCheck';
 import ValuationChartContainer from '@/components/Commentary//ValuationChartContainer';
 import AdditionalFeatures from '@/components/Commentary/AdditionalFeatures';
 
-type Props = { address: string };
-
-const PdfCommentary2 = ({ address = '서울특별시 구로구 경인로 70' }: Props) => {
+const PdfCommentary2 = () => {
+  const address = '서울특별시 구로구 경인로 70';
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
 
