@@ -80,7 +80,6 @@ const PdfSend = (props: Props) => {
 
   return (
     <div>
-      <Progress value={load} />
       <form onSubmit={handleSubmit(onSubmit)}>
         <Label>
           파일 선택

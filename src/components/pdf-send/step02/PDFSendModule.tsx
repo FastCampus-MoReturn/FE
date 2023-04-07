@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { ChangeEvent, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import axios, { AxiosProgressEvent } from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Progress from '@/components/pdf-send/Progress';
 import dragPresets from '@/components/pdf-send/step02/dragEvent';
 import { useAppDispatch } from '@/store/hooks';
@@ -9,6 +10,10 @@ import { PDFAction } from '@/store/pdfSlice';
 import { Pretendard } from '@/styles/DesignSystem';
 import COLORS from '@/styles/colors';
 import upload from '@/assets/file_upload_100px.svg';
+import pdf72px from '@/assets/pdf_72px.svg';
+import cautionIcon from '@/assets/caution_circle_36px.svg';
+import checkIcon from '@/assets/check_circle_36px.svg';
+import closeIcon from '@/assets/close_circle_36px.svg';
 
 export const instance = axios.create({
   baseURL: 'https://moreturn.shop/',
@@ -18,6 +23,17 @@ export const instance = axios.create({
     accept: '*/*',
   },
 });
+
+const StateIcon = (state: number) => {
+  switch (state) {
+    case 3:
+      return <img src={checkIcon} alt="checkIcon" />;
+    case 4:
+      return <img src={cautionIcon} alt="cautionIcon" />;
+    default:
+      return <img src={closeIcon} alt="closeIcon" />;
+  }
+};
 
 type FormValues = {
   test: FormData;
@@ -33,6 +49,7 @@ interface HTMLFileInputElement extends HTMLInputElement {
 
 const PDFInput = ({ setStep }: Props) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const controllerRef = useRef(new AbortController());
   const inputRef = useRef<HTMLFileInputElement>(null);
   const {
@@ -45,9 +62,19 @@ const PDFInput = ({ setStep }: Props) => {
   // 드롭 상태 관리
   const [drag, setDrag] = useState(false);
   const [pdfData, setPdfData] = useState({});
+  // 로드 스테이트
+  const [totalCount, setTotalCount] = useState(0);
+  const stateMsg = [
+    '파일 선택 됨',
+    '파일 전송 중...',
+    '파일 해석 중...',
+    '전송 완료',
+    '파일 전송 실패',
+  ];
+  const loadStateMsg = ['전송 대기', '전송 중...', '파일 해석 중...', '전송 완료', '전송 실패'];
 
   useEffect(() => {
-    console.log('pdfData', pdfData);
+    setTotalCount(3);
   }, [pdfData]);
 
   const cancelRequest = () => {
@@ -56,15 +83,18 @@ const PDFInput = ({ setStep }: Props) => {
   };
 
   const removeFileState = () => {
+    setTotalCount(0);
     setProgressTotal(0);
     setFile(undefined);
     setProgressLoad(0);
+    cancelRequest();
     if (inputRef.current) inputRef.current.value = '';
   };
 
   // 전송 과정( 전송 중임을 인식하기 위해 async 을 선언함 )
   const onSubmit = async () => {
     if (file === undefined) return alert('파일을 넣어주세요');
+    setTotalCount(1);
 
     // const formData = new FormData();
     const formData = new FormData();
@@ -85,11 +115,19 @@ const PDFInput = ({ setStep }: Props) => {
         },
       })
       .catch((err) => {
-        return err;
+        return err.response;
       });
     // eslint-disable-next-line consistent-return
-    setPdfData(result.data.data);
-    dispatch(PDFAction(result.data.data));
+
+    if (result.data.success) {
+      setPdfData(result.data.data);
+      dispatch(PDFAction(result.data.data));
+      setTimeout(() => navigate('/commentary'), 1000);
+    } else {
+      setTotalCount(4);
+      alert(result.data.message);
+    }
+
     return result;
   };
 
@@ -120,35 +158,63 @@ const PDFInput = ({ setStep }: Props) => {
 
   const valueToByte = (value: number) => {
     if (value < 1024) return `${value}B`;
-    if (value < 1024 * 1024) return `${(value / 1024).toFixed(2)}KB`;
-    if (value < 1024 * 1024 * 1024) return `${(value / 1024 / 1024).toFixed(2)}MB`;
-    return `${(value / 1024 / 1024 / 1024).toFixed(2)}GB`;
+    if (value < 1024 * 1024) return `${(value / 1024).toFixed(1)}KB`;
+    if (value < 1024 * 1024 * 1024) return `${(value / 1024 / 1024).toFixed(1)}MB`;
+    return `${(value / 1024 / 1024 / 1024).toFixed(1)}GB`;
   };
 
   return (
     <PDFInputForm onSubmit={handleSubmit(onSubmit)}>
       {file ? (
-        <PDFLoadBox>
-          <Progress value={(progressLoad * 100) / ProgressTotal} />
-          <div>
-            {valueToByte(progressLoad)}/{valueToByte(ProgressTotal)}
-          </div>
-          <div>
-            progressLoad / ProgressTotal:{' '}
-            {isNumber(progressLoad / ProgressTotal)
-              ? `${((progressLoad / ProgressTotal) * 100).toFixed(2)}%`
-              : '파일을 넣어주세요'}
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              cancelRequest();
-              removeFileState();
-            }}
-          >
-            x
-          </button>
-        </PDFLoadBox>
+        <LoadingWarp>
+          <Between>
+            <Pretendard
+              size="18px"
+              weight={700}
+              color={totalCount === 4 ? COLORS.Alert : COLORS.Font_BL}
+            >
+              {stateMsg[totalCount]}
+            </Pretendard>
+            <UnderText
+              onClick={() => {
+                cancelRequest();
+                removeFileState();
+              }}
+              size="16px"
+              weight={400}
+              color={COLORS.Font_grey_02}
+            >
+              삭제 및 파일 재선택
+            </UnderText>
+          </Between>
+
+          <PDFLoadBox>
+            <img src={pdf72px} alt="pdf-img" />
+            <ProgressWrap>
+              <Pretendard size="18px" weight={600}>
+                {file.name}
+              </Pretendard>
+              <Between>
+                <Pretendard size="16px" weight={400} color={COLORS.Font_grey_03}>
+                  {valueToByte(progressLoad)} of {valueToByte(file.size)}
+                  {isNumber(progressLoad / ProgressTotal)
+                    ? `(${((progressLoad / ProgressTotal) * 100).toFixed(1)}%)`
+                    : '(0%)'}
+                </Pretendard>
+                <Pretendard size="16px" weight={400} color={COLORS.Font_grey_03}>
+                  {loadStateMsg[totalCount]}
+                </Pretendard>
+              </Between>
+
+              <Progress
+                value={(progressLoad * 100) / ProgressTotal}
+                setter={setTotalCount}
+                count={totalCount}
+              />
+            </ProgressWrap>
+            {StateIcon(totalCount)}
+          </PDFLoadBox>
+        </LoadingWarp>
       ) : (
         <PDFInputLoadBox
           drag={drag}
@@ -173,13 +239,23 @@ const PDFInput = ({ setStep }: Props) => {
               ref={inputRef}
               onChange={(e: ChangeEvent<HTMLFileInputElement>) => {
                 if (e.target.files.length === 0) return;
+
+                if (e.target.files[0].type !== 'application/pdf') {
+                  alert('pdf 파일만 가능합니다');
+                  e.target.value = '';
+                  return;
+                }
+
+                const num = e.target.files[0].size;
+
                 fileChange(e.target.files[0]);
+                setProgressTotal(() => num);
               }}
             />
           </PDFInputLabel>
         </PDFInputLoadBox>
       )}
-      <PDFSubmitBtn type="submit" disabled={isSubmitting}>
+      <PDFSubmitBtn type="submit" className={isSubmitting ? '' : 'active'} disabled={isSubmitting}>
         <Pretendard size="20px" weight={600} color={COLORS.Font_grey_03}>
           제출하기
         </Pretendard>
@@ -264,6 +340,7 @@ const PDFInputLabel = styled.label`
   align-items: center;
   padding: 0px;
   gap: 10px;
+  z-index: 10;
 
   width: 160px;
   height: 48px;
@@ -314,4 +391,41 @@ const PDFSubmitBtn = styled.button`
 
   background: ${COLORS.Disable};
   border-radius: 12px;
+  &.active {
+    background: ${COLORS.Main};
+    span {
+      color: #fff;
+    }
+  }
+`;
+
+const LoadingWarp = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+`;
+
+const Between = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const UnderText = styled(Pretendard.withComponent('button'))`
+  text-decoration-line: underline;
+  background: transparent;
+  border: none;
+`;
+
+const ProgressWrap = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+  gap: 16px;
 `;

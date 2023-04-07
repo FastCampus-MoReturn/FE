@@ -50,6 +50,8 @@ const dragEvent = (
 파일만 업로드 되었습니다`);
     } else if (files.length === 0) {
       alert(`pdf 파일이 선택되지 않았습니다`);
+      isDraggingSetter(false);
+      return;
     }
 
     cb(e.dataTransfer.files[0]);

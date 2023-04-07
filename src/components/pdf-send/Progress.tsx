@@ -1,7 +1,11 @@
 import styled from '@emotion/styled';
+import { SetStateAction } from 'react';
+import COLORS from '@/styles/colors';
 
 type Props = {
   value: number;
+  count: number;
+  setter: React.Dispatch<SetStateAction<number>>;
 };
 
 const minZero = (value: number) => {
@@ -22,11 +26,16 @@ const minZero = (value: number) => {
   return value;
 };
 
-const Index = ({ value }: Props) => {
-  console.log('내부', value);
+const Index = ({ value: loadState, count, setter }: Props) => {
+  if (loadState === 100) {
+    if (count < 3) {
+      setter(2);
+    }
+  }
+  console.log('내부', loadState);
   return (
     <Progress>
-      <Loading value={minZero(value)}>{value === 100 ? 'Loading complete' : null}</Loading>
+      <Loading value={minZero(loadState)} count={count} />
     </Progress>
   );
 };
@@ -35,17 +44,28 @@ export default Index;
 
 const Progress = styled.div`
   width: 100%;
-  height: 40px;
-  background-color: #eee;
-  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0px;
+
+  width: 100%;
+  height: 4px;
+
+  background: ${COLORS.BG_200};
+  border-radius: 2px;
   overflow: hidden;
   position: relative;
 `;
 
-const Loading = styled.div<Props>`
+type LoadProps = {
+  value: number;
+  count: number;
+};
+const Loading = styled.div<LoadProps>`
   width: ${(props) => props.value}%;
   height: 100%;
-  background-color: #000;
+  background-color: ${(props) => (props.count === 4 ? COLORS.Alert : COLORS.Main)};
   position: absolute;
   display: flex;
   justify-content: center;
@@ -53,5 +73,6 @@ const Loading = styled.div<Props>`
   color: #fff;
   top: 0;
   left: 0;
+  border-radius: 2px;
   transition: width 0.5s;
 `;

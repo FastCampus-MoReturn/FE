@@ -16,7 +16,6 @@ const Router = () => {
       <Route path="dictionary" element={<Dictionary />} />
       <Route path="pdf-send" element={<PdfSend />} />
       <Route path="step" element={<PdfStep />} />
-      <Route path="commentary" element={<Commentary />} />
       <Route path="commentary" element={<PdfCommentary2 />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
