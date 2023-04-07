@@ -8,6 +8,7 @@ import PdfStep from '@/pages/PdfStep';
 
 import PdfCommentary2 from '@/pages/PdfCommentary2';
 import Dictionary from '@/pages/Dictionary';
+import Explanation from '@/pages/Explanation';
 
 const Router = () => {
   return (
@@ -17,6 +18,7 @@ const Router = () => {
       <Route path="pdf-send" element={<PdfSend />} />
       <Route path="step" element={<PdfStep />} />
       <Route path="commentary" element={<PdfCommentary2 />} />
+      <Route path="explanation" element={<Explanation />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

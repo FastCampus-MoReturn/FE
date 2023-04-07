@@ -44,7 +44,6 @@ const ContentWrap = styled.div`
   height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
   border-radius: 10px;
   color: black;
   text-align: center;
@@ -59,6 +58,10 @@ const ContentWrap = styled.div`
     font-size: 24px;
   }
   button {
-    margin: 30px 0;
+    margin-top: 30px;
+    margin-right: 10px;
+    &:last-child {
+      margin-right: 0;
+    }
   }
 `;

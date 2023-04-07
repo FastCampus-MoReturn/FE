@@ -21,10 +21,6 @@ type Props = {
   setStep: React.Dispatch<SetStateAction<number>>;
 };
 
-interface HTMLFileInputElement extends HTMLInputElement {
-  files: FileList;
-}
-
 const PDFInput = ({ setStep }: Props) => {
   return (
     <PDFInputForm>

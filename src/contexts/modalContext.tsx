@@ -1,6 +1,8 @@
+/* eslint-disable no-multi-assign */
+/* eslint-disable import/no-mutable-exports */
 import { createContext } from 'react';
 import useModal from '@/hooks/useModal';
-import ModalPortal from '@/components/ModalPortal';
+import ModalPortal from '@/components/ui/ModalPortal';
 
 const ModalContext = createContext<any>(null);
 
