@@ -124,6 +124,7 @@ const PDFInput = (props: Props) => {
   return (
     <Globally>
       <Link to="/pdf-send"> 얍 </Link>
+      <Link to="/explanation"> explanation페이지로 이동 ▷</Link>
       <PDFInputForm onSubmit={handleSubmit(onSubmit)}>
         <PDFInputInfoBox>
           <PDFInputTitle>등기부등본 파일 업로드하기</PDFInputTitle>
