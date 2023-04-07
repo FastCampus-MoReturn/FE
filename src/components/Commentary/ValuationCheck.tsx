@@ -1,40 +1,16 @@
 import styled from '@emotion/styled';
 import { Link } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+
 import ContentsBox from '@/components/common/ContentsBox';
 
 interface Props {
-  address?: string;
   transactionMax?: string;
   transactionMin?: string;
+  x: number;
+  y: number;
 }
 
-const ValuationCheck = ({
-  address = '서울특별시 강남구 역삼동 826-21',
-  transactionMax = '',
-  transactionMin = '',
-}: Props) => {
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
-
-  useEffect(() => {
-    console.log(address, x, y);
-
-    // 주소-좌표 변환 객체를 생성합니다
-    const geocoder = new kakao.maps.services.Geocoder();
-
-    // 주소로 좌표를 검색합니다
-    geocoder.addressSearch(address, function (result) {
-      // 정상적으로 검색이 완료됐으면
-      setY(parseFloat(result[0].y));
-      setX(parseFloat(result[0].x));
-    });
-  }, []);
-
-  useEffect(() => {
-    console.log(x, y);
-  }, [x, y]);
-
+const ValuationCheck = ({ transactionMax = '', transactionMin = '', x = 0, y = 0 }: Props) => {
   return (
     <>
       <div className="title"> 담보물 평가 확인하기 </div>
@@ -74,7 +50,6 @@ const ValuationCheck = ({
 export default ValuationCheck;
 
 ValuationCheck.defaultProps = {
-  address: '서울특별시 강남구 역삼동 826-21',
   transactionMax: '-',
   transactionMin: '-',
 };
