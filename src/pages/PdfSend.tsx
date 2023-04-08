@@ -2,7 +2,7 @@ import { ChangeEvent, MouseEventHandler, SetStateAction, useEffect, useRef, useS
 import { useForm } from 'react-hook-form';
 import axios, { AxiosProgressEvent } from 'axios';
 import styled from '@emotion/styled';
-import Progress from '../components/pdf-send/Progress';
+import Progress from '../components/pdf-send/step02/Progress';
 import dragPresets from '../components/pdf-send/step02/dragEvent';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { PDFAction } from '@/store/pdfSlice';

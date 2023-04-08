@@ -1,20 +1,22 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import axios, { AxiosProgressEvent } from 'axios';
+import _ from 'lodash';
+import axios, { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Progress from '@/components/pdf-send/Progress';
+
+import Progress from '@/components/pdf-send/step02/Progress';
 import dragPresets from '@/components/pdf-send/step02/dragEvent';
 import { useAppDispatch } from '@/store/hooks';
 import { PDFAction } from '@/store/pdfSlice';
-import { Pretendard } from '@/styles/DesignSystem';
+import { Pretendard, mainLargeButton, subLargeButton } from '@/styles/DesignSystem';
 import COLORS from '@/styles/colors';
 import upload from '@/assets/file_upload_100px.svg';
 import pdf72px from '@/assets/pdf_72px.svg';
 import cautionIcon from '@/assets/caution_circle_36px.svg';
-import checkIcon from '@/assets/check_circle_36px.svg';
 import closeIcon from '@/assets/close_circle_36px.svg';
 import { errorMessage } from '@/apis/auth';
+import CheckIcon from '../CheckIcon';
 
 export const instance = axios.create({
   baseURL: 'https://moreturn.shop/',
@@ -28,7 +30,7 @@ export const instance = axios.create({
 const StateIcon = (state: number) => {
   switch (state) {
     case 3:
-      return <img src={checkIcon} alt="checkIcon" />;
+      return <CheckIcon fill="#15CDCA" size="36" />;
     case 4:
       return <img src={cautionIcon} alt="cautionIcon" />;
     default:
@@ -75,7 +77,9 @@ const PDFInput = ({ setStep }: Props) => {
   const loadStateMsg = ['전송 대기', '전송 중...', '파일 해석 중...', '전송 완료', '전송 실패'];
 
   useEffect(() => {
-    setTotalCount(3);
+    if (Object.keys(pdfData).length > 0) {
+      setTotalCount(3);
+    }
   }, [pdfData]);
 
   const cancelRequest = () => {
@@ -84,6 +88,7 @@ const PDFInput = ({ setStep }: Props) => {
   };
 
   const removeFileState = () => {
+    setPdfData({});
     setTotalCount(0);
     setProgressTotal(0);
     setFile(undefined);
@@ -109,17 +114,27 @@ const PDFInput = ({ setStep }: Props) => {
       .post('api/pdfupload', formData, {
         signal: controllerRef.current.signal,
         onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-          if (progressEvent?.total === undefined) return;
           // const percentage = (progressEvent.loaded * 100) / progressEvent.total;
+          if (progressEvent?.total === undefined) return;
           setProgressTotal(progressEvent.total);
           setProgressLoad(progressEvent.loaded);
         },
       })
       .catch((err) => {
-        return err.response;
+        console.log('err', err);
+        if (err.response) {
+          // 요청이 전송되었고, 서버는 2xx 외의 상태 코드로 응답했습니다.
+          return err.response;
+        } else if (err.request) {
+          return { data: { success: false, message: `${err.code} : ${err.message}` } };
+        } else {
+          // 오류가 발생한 요청을 설정하는 동안 문제가 발생했습니다.
+          errorMessage(err.message);
+        }
+        return { data: { code: 200, success: false, message: '파일 전송 실패' } };
       });
     // eslint-disable-next-line consistent-return
-
+    console.log(result);
     if (result.data.success) {
       setPdfData(result.data.data);
       dispatch(PDFAction(result.data.data));
@@ -135,6 +150,8 @@ const PDFInput = ({ setStep }: Props) => {
   const fileChange = (oneFile: SetStateAction<File>) => {
     if (oneFile instanceof File) {
       removeFileState();
+      console.log(oneFile.size);
+      if (oneFile.size > 1024 * 1024 * 15) return errorMessage('파일 용량이 너무 큽니다');
       setFile(oneFile);
     }
     if (oneFile === undefined) removeFileState();
@@ -229,7 +246,7 @@ const PDFInput = ({ setStep }: Props) => {
               여기로 파일을 드래그하거나 하단에 파일 선택을 통해 등기부등본을 업로드해주세요.
             </Pretendard>
             <Pretendard size="16px" weight={400} color={COLORS.Alert}>
-              *단일 PDF 파일만 업로드 가능합니다.
+              *단일 PDF 파일(10MB 이하)만 업로드 가능합니다.
             </Pretendard>
           </MsgArea>
           <PDFInputLabel>
@@ -256,7 +273,7 @@ const PDFInput = ({ setStep }: Props) => {
           </PDFInputLabel>
         </PDFInputLoadBox>
       )}
-      <PDFSubmitBtn type="submit" className={isSubmitting ? '' : 'active'} disabled={isSubmitting}>
+      <PDFSubmitBtn type="submit" disabled={isSubmitting}>
         <Pretendard size="20px" weight={600} color={COLORS.Font_grey_03}>
           제출하기
         </Pretendard>
@@ -327,6 +344,7 @@ const PDFInputLoadBox = styled.div<DragBoxProps>`
     border-radius: 20px;
     opacity: 1;
     transition: opacity 0.25s ease-in-out;
+    z-index: 20;
   }
 `;
 
@@ -335,22 +353,11 @@ const PDFInputComp = styled.input`
 `;
 
 const PDFInputLabel = styled.label`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0px;
-  gap: 10px;
+  ${subLargeButton}
+  font-size: 16px;
   z-index: 10;
-
   width: 160px;
   height: 48px;
-  color: ${COLORS.Main};
-  border: 1px solid ${COLORS.Main};
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 16px;
-  letter-spacing: -0.05em;
 `;
 
 const PDFLoadBox = styled.div`
@@ -378,26 +385,7 @@ const MsgArea = styled.div`
 `;
 
 const PDFSubmitBtn = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 24px 0px;
-  gap: 10px;
-
-  width: 100%;
-
-  outline: none;
-  border: none;
-
-  background: ${COLORS.Disable};
-  border-radius: 12px;
-  &.active {
-    background: ${COLORS.Main};
-    span {
-      color: #fff;
-    }
-  }
+  ${mainLargeButton}
 `;
 
 const LoadingWarp = styled.div`
