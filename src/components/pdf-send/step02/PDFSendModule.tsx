@@ -150,7 +150,7 @@ const PDFInput = ({ setStep }: Props) => {
     if (oneFile instanceof File) {
       removeFileState();
 
-      if (oneFile.size > 1024 * 1024 * 15) return errorMessage('파일 용량이 너무 큽니다');
+      if (oneFile.size > 1024 * 1024 * 10) return errorMessage('파일 용량이 너무 큽니다');
       setFile(oneFile);
     }
     if (oneFile === undefined) removeFileState();
