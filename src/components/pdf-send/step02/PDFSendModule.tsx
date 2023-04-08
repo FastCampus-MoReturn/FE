@@ -121,7 +121,6 @@ const PDFInput = ({ setStep }: Props) => {
         },
       })
       .catch((err) => {
-        console.log('err', err);
         if (err.response) {
           // 요청이 전송되었고, 서버는 2xx 외의 상태 코드로 응답했습니다.
           return err.response;
@@ -134,7 +133,7 @@ const PDFInput = ({ setStep }: Props) => {
         return { data: { code: 200, success: false, message: '파일 전송 실패' } };
       });
     // eslint-disable-next-line consistent-return
-    console.log(result);
+
     if (result.data.success) {
       setPdfData(result.data.data);
       dispatch(PDFAction(result.data.data));
@@ -150,7 +149,7 @@ const PDFInput = ({ setStep }: Props) => {
   const fileChange = (oneFile: SetStateAction<File>) => {
     if (oneFile instanceof File) {
       removeFileState();
-      console.log(oneFile.size);
+
       if (oneFile.size > 1024 * 1024 * 15) return errorMessage('파일 용량이 너무 큽니다');
       setFile(oneFile);
     }

@@ -25,7 +25,6 @@ const minZero = (value: number) => {
 };
 
 const Index = ({ value }: Props) => {
-  console.log('내부', value);
   return (
     <Progress>
       <Loading value={minZero(value * 50)} />
