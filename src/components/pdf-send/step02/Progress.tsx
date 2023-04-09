@@ -32,7 +32,7 @@ const Index = ({ value: loadState, count, setter }: Props) => {
       setter(2);
     }
   }
-  console.log('내부', loadState);
+
   return (
     <Progress>
       <Loading value={minZero(loadState)} count={count} />

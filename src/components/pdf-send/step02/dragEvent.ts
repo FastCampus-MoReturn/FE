@@ -9,7 +9,7 @@ const dragEvent = (
   const onDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('onDragEnter');
+
     isDraggingSetter(true);
   };
   const onDragLeave = (e: React.DragEvent<HTMLDivElement>) => {

@@ -1,12 +1,8 @@
 import styled from '@emotion/styled';
 import { ChangeEvent, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import axios, { AxiosProgressEvent } from 'axios';
-import Progress from '@/components/pdf-send/Progress';
-import dragPresets from '@/components/pdf-send/step02/dragEvent';
-import { useAppDispatch } from '@/store/hooks';
-import { PDFAction } from '@/store/pdfSlice';
+import { subLargeButton, mainLargeButton } from '@/styles/DesignSystem';
 import COLORS from '@/styles/colors';
 
 export const instance = axios.create({
@@ -62,9 +58,9 @@ const PDFInput = ({ setStep }: Props) => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            아니요(발급 사이트로 이동)
+            아니요 (발급 사이트로 이동)
           </PreviousButton>
-          <NextButton onClick={() => setStep((state) => state + 1)}>네(다음으로 이동)</NextButton>
+          <NextButton onClick={() => setStep((state) => state + 1)}>네 (다음으로 이동)</NextButton>
         </ButtonWrap>
       </StepWarp>
     </PDFIntro>
@@ -153,48 +149,9 @@ const ButtonWrap = styled.div`
 `;
 
 const PreviousButton = styled.a`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 0px;
-  gap: 10px;
-
-  width: 50%;
-  height: 72px;
-
-  background: ${COLORS.MainBG};
-  border: 1px solid ${COLORS.Main};
-  border-radius: 12px;
-
-  // font
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 150%;
-  letter-spacing: -0.05em;
-
-  color: ${COLORS.Main};
+  ${subLargeButton}
 `;
 
 const NextButton = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-
-  width: 50%;
-  height: 72px;
-
-  background: ${COLORS.Main};
-  border: none;
-  outline: none;
-  border-radius: 12px;
-
-  // font
-  font-weight: 600;
-  font-size: 20px;
-  line-height: 150%;
-  letter-spacing: -0.05em;
-
-  color: #fff;
+  ${mainLargeButton}
 `;
