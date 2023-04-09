@@ -1,9 +1,66 @@
 import styled from '@emotion/styled';
+import axios from 'axios';
 import { useState } from 'react';
 
+interface DictionaryType {
+  title: string;
+  description: string;
+}
+
 const ResultInfo = () => {
-  const [search, setSearch] = useState(true);
-  const [view, setView] = useState();
+  const [search, setSearch] = useState(false);
+  const [Title, setTitle] = useState<string[]>([]);
+  const [info, setInfo] = useState<string>();
+  const [infoTitle, setInfoTitle] = useState<string>('');
+  const [inputValue, setInputValue] = useState('');
+  const [select, setSelect] = useState<number>();
+
+  const word = ['가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카', '타', '파', '하'];
+  const getTitleFn = (value: string) => {
+    // eslint-disable-next-line no-shadow
+    const getTitle = async (value: string) => {
+      const response = await axios.post(`https://moreturn.shop:443/api/terms?keyword=${value}`);
+
+      setTitle(response.data.terms.map((v: DictionaryType) => v.title));
+      setInfoTitle(response.data.terms.map((v: DictionaryType) => v.title)[0]);
+      setInfo(response.data.terms.map((v: DictionaryType) => v.description)[0]);
+    };
+    setSearch(true);
+    getTitle(value);
+  };
+
+  const getInfoFn = (value: string, index: number) => {
+    // eslint-disable-next-line no-shadow
+    const getInfo = async (value: string) => {
+      const response = await axios.post(`https://moreturn.shop:443/api/terms?keyword=${value}`);
+
+      setInfoTitle(response.data.terms.map((v: DictionaryType) => v.title)[0]);
+      setInfo(response.data.terms.map((v: DictionaryType) => v.description)[0]);
+    };
+    getInfo(value);
+    setSelect(index);
+  };
+
+  // 검색 기능
+  type tagetType = {
+    target: valueType;
+  };
+
+  type valueType = {
+    value: string;
+  };
+
+  type inputProps = {
+    (value: tagetType): void;
+  };
+  const inputChange: inputProps = ({ target: { value } }) => {
+    setInputValue(value);
+  };
+
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    getTitleFn(inputValue);
+  };
 
   return (
     <>
@@ -14,47 +71,52 @@ const ResultInfo = () => {
           </p>
           <p>가나다로 검색</p>
           <div>
-            <button type="button">가</button>
-            <button type="button">나</button>
-            <button type="button">다</button>
-            <button type="button">라</button>
-            <button type="button">마</button>
-            <button type="button">바</button>
-            <button type="button">사</button>
-            <button type="button">아</button>
-            <button type="button">자</button>
-            <button type="button">차</button>
-            <button type="button">카</button>
-            <button type="button">타</button>
-            <button type="button">파</button>
-            <button type="button">하</button>
+            {word.map((v, index) => (
+              // eslint-disable-next-line react/no-array-index-key
+              <button
+                type="button"
+                // eslint-disable-next-line react/no-array-index-key
+                key={index}
+                onClick={(e) => {
+                  getTitleFn(e.currentTarget.innerText);
+                }}
+              >
+                {v}
+              </button>
+            ))}
           </div>
         </ConsonantButton>
 
         <SearchInput>
           <p>단어로 검색</p>
           <div>
-            <input type="text" />
-            <button type="button">검색</button>
+            <form onSubmit={handleSubmit}>
+              <input type="text" name="value" value={inputValue} onChange={inputChange} />
+              <button type="submit">검색</button>
+            </form>
           </div>
         </SearchInput>
       </SearchForm>
 
       {search && (
         <ResultWrap>
-          <p>
-            전체 <span>1건</span>, 현제페이지 <span>1/1</span>
-          </p>
-
           <div>
             <ul>
-              <li>몰라일단 적어놓자</li>
-              <li>몰라일단 적어놓자</li>
-              <li>몰라일단 적어놓자</li>
+              {Title.map((title, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <li key={index} className={`${select === index ? 'select' : ''}`}>
+                  <button
+                    type="button"
+                    onClick={(e) => getInfoFn(e.currentTarget.innerText, index)}
+                  >
+                    {title}
+                  </button>
+                </li>
+              ))}
             </ul>
             <ul>
-              <li>몰라일단 적어놓는 title </li>
-              <li>몰라일단 적어놓는 content</li>
+              <li>{infoTitle}</li>
+              <li>{info}</li>
             </ul>
           </div>
         </ResultWrap>
@@ -118,6 +180,12 @@ const SearchInput = styled.div`
     display: flex;
     justify-content: space-between;
     margin-top: 20px;
+
+    form {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
   }
 
   input {
@@ -126,6 +194,9 @@ const SearchInput = styled.div`
     border: 1px solid #d2d2dc;
     border-radius: 10px;
     background-color: #fff;
+    color: #171717;
+    font-size: 24px;
+    padding-left: 10px;
   }
 
   input:focus {
@@ -177,13 +248,39 @@ const ResultWrap = styled.div`
       border: 1px solid #d2d2dc;
       border-radius: 20px;
       font-size: 24px;
-      overflow: hidden;
+      overflow: auto;
+      &::-webkit-scrollbar {
+        background-color: #f4f4f4;
+        border-radius: 0 20px 20px 0;
+        width: 18px;
+      }
+      &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        background-color: #d1d1d1;
+        border: 4px solid #f4f4f4;
+      }
 
       li {
         display: flex;
         align-items: center;
         height: 87px;
-        padding: 0 45px;
+        padding: 0 25px;
+
+        &.select {
+          background: #f0f4ff;
+        }
+
+        button {
+          font-size: 24px;
+          background: none;
+          color: #171717;
+          border: none;
+          text-align: start;
+          width: 100%;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
 
@@ -199,6 +296,11 @@ const ResultWrap = styled.div`
         font-size: 30px;
         font-weight: 500;
         color: #4258d7;
+      }
+
+      li:last-of-type {
+        height: auto;
+        padding-top: 20px;
       }
     }
   }
