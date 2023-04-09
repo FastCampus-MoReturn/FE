@@ -26,6 +26,7 @@ const ResultInfo = () => {
       setInfo(response.data.terms.map((v: DictionaryType) => v.description)[0]);
     };
     setSearch(true);
+    setSelect(0);
     getTitle(value);
   };
 
