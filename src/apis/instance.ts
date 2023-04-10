@@ -16,20 +16,12 @@ const axiosApi = (url: string) => {
     },
   );
 
-  instance.interceptors.request.use(
-    (config) => {
-      const token = false; // 수정 필요
-      // eslint-disable-next-line no-param-reassign
-      if (token) config.headers.Authorization = `Bearer ${token}`;
-      return config;
-    },
-    (error) => {
-      console.log(error);
-      return Promise.reject(error);
-    },
-  );
+  instance.interceptors.request.use((error) => {
+    console.log(error);
+    return Promise.reject(error);
+  });
 
   return instance;
 };
 
-export const axiosInstance = axiosApi(API_BASE_URL);
+export const axiosInstance = axiosApi('https://moreturn.shop/');

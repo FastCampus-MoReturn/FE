@@ -1,16 +1,36 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 import InfoCheck from '@/components/Commentary//InfoCheck';
 import ValuationCheck from '@/components/Commentary//ValuationCheck';
-import ValuationChartContainer from '@/components/Commentary//ValuationChartContainer';
 import AdditionalFeatures from '@/components/Commentary/AdditionalFeatures';
+import { useAppSelector } from '@/store/hooks';
+import { errorMessage } from '@/apis/auth';
 
 const PdfCommentary2 = () => {
-  const address = '서울특별시 구로구 경인로 70';
+  const pdfData = useAppSelector((state) => state.pdf);
+  const [data, setData] = useState<any>([]);
+  useEffect(() => {
+    const body = {
+      address: pdfData.address,
+      researchDate: '12',
+    };
+    async function post() {
+      try {
+        const response: any = await axios.post('https://moreturn.shop/api/tradingdetail', body);
+        console.log(response.data.list);
+        setData(response.data.list);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    post();
+  }, []);
+
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
 
   useEffect(() => {
-    console.log(address, x, y);
+    const { address } = pdfData;
 
     // 주소-좌표 변환 객체를 생성합니다
     const geocoder = new kakao.maps.services.Geocoder();
@@ -28,9 +48,8 @@ const PdfCommentary2 = () => {
   }, [x, y]);
   return (
     <>
-      <InfoCheck />
-      <ValuationCheck x={x} y={y} />
-      <ValuationChartContainer />
+      <InfoCheck pdfData={pdfData} />
+      <ValuationCheck x={x} y={y} data={data} pdfData={pdfData} />
       <AdditionalFeatures x={x} y={y} />
     </>
   );

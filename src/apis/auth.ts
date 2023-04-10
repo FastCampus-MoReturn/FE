@@ -18,12 +18,6 @@ const toastOptions: ToastOptions = {
   closeButton: false,
 };
 
-export const login = async (data: LoginProps) => {
-  const response: Response = await axiosInstance.post(API_URLS.LOGIN, data);
-  console.log('로그인 성공');
-  return response;
-};
-
 export const error = async () => {
   try {
     const res = await axios.get('test');

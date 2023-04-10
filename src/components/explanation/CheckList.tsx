@@ -14,7 +14,7 @@ const CheckList = (props: checkListType) => {
         return (
           <li key={`check-${item}`}>
             <span>
-              <HiCheck className="white" />
+              <HiCheck className="white" style={{ width: '14px' }} />
             </span>
             {item}
           </li>
@@ -27,8 +27,10 @@ const CheckList = (props: checkListType) => {
 export default CheckList;
 
 const List = styled.ul`
+  font-size: 16px;
   margin: 20px 0 36px;
   display: flex;
+  justify-content: flex-start;
   gap: 20px;
   padding: 20px;
   width: fit-content;
@@ -38,16 +40,16 @@ const List = styled.ul`
     display: flex;
     align-items: center;
     color: #4258d7;
+    /* width: 100%; */
     span {
       display: inline-flex;
       margin-right: 6px;
       align-items: center;
       justify-content: center;
-      min-width: 24px;
-      min-height: 24px;
+      min-width: 18px;
+      min-height: 18px;
       border-radius: 9999px;
       background-color: #4258d7;
-      font-size: 20px;
     }
   }
   @media only screen and (max-width: 768px) {
