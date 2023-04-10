@@ -13,8 +13,8 @@ const App = () => {
         <Header />
         <Router />
         <Footer />
-        <Sidebar />
-        <Sidebar />
+        {/* <Sidebar />
+        <Sidebar /> */}
       </BrowserRouter>
     </ModalProvider>
   );

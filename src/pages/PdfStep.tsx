@@ -10,6 +10,7 @@ import StepProgress from '@/components/pdf-send/StepProgress';
 import COLORS from '@/styles/colors';
 import CheckIcon from '@/components/pdf-send/CheckIcon';
 import { Pretendard } from '@/styles/DesignSystem';
+import Explanation from './Explanation';
 
 type Props = {};
 
@@ -30,7 +31,7 @@ const PdfStep = (props: Props) => {
       case 1:
         return <PDFComp setStep={setStep} />;
       case 2:
-        return <Navigate to="/commentary" />;
+        return <Explanation />;
       default:
         return <Navigate to="/" />;
     }

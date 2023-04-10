@@ -9,7 +9,7 @@ type Props = {
 const AdditionalFeatures = ({ x, y }: Props) => {
   return (
     <>
-      <div className="feature-link">
+      {/* <div className="feature-link">
         <div className="realtor-call">
           <Link
             to={`https://www.google.co.kr/maps/data=d${y}d${x}?hl=ko`}
@@ -30,7 +30,7 @@ const AdditionalFeatures = ({ x, y }: Props) => {
           </Link>
           <span>로드뷰를 통해 건물의 외관과 주변 상권을 눈으로 확인해보세요.</span>
         </div>
-      </div>
+      </div> */}
       {/* <div className="document-link">
         <div className="realtor-call">
           <Link

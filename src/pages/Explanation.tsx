@@ -2,19 +2,19 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable import/no-absolute-path */
 /* eslint-disable react/no-unknown-property */
-import React, { Fragment } from 'react';
+import React, { Fragment, SetStateAction } from 'react';
 import { HiCheck } from 'react-icons/hi';
 import styled from '@emotion/styled';
 import { useAppSelector } from '@/store/hooks';
 import candyIcon from '@/assets/candy.png';
 import exclaIcon from '@/assets/excla.png';
 import CheckList from '@/components/explanation/CheckList';
+import PdfCommentary2 from './PdfCommentary2';
 
 type donutDataType = { [key: number]: { [key: string]: string } };
 
 const Explanation = () => {
   const pdfData = useAppSelector((state) => state.pdf);
-  console.log('state pdf', pdfData);
 
   const colorList = ['#2337A9', '#4258D7', '#6C7DE0', '#96A3E9', '#D5DAF6', '#EAECFB'];
 
@@ -37,7 +37,6 @@ const Explanation = () => {
 
   return (
     <ExplanationArea>
-      <p>(진행도 프로그레시브바 영역)</p>
       <h2>등기부등본 해석</h2>
       <Content>
         <h4>
@@ -58,7 +57,7 @@ const Explanation = () => {
           빨간줄은 이미 지나간 내용이니 참고하지 않으셔도 됩니다.
         </p>
       </Content>
-      <Content style={{ padding: '40px' }}>
+      <Content>
         <h3>업로드 등기부등본 들여다보기</h3>
         <div>
           <h4>표제부</h4>
@@ -341,6 +340,7 @@ const Explanation = () => {
           </ColumnWrap> */}
         </div>
       </Content>
+      <PdfCommentary2 />
     </ExplanationArea>
   );
 };
@@ -381,7 +381,7 @@ const ExplanationArea = styled.div`
   }
   h3 {
     margin: 20px 0;
-    border-bottom: 1px solid black;
+    border-bottom: 1px solid #e9e9ed;
     line-height: 90px;
     font-weight: 600;
     font-size: 30px;
@@ -413,13 +413,13 @@ const ExplanationArea = styled.div`
   }
 `;
 
-const Content = styled.div`
+export const Content = styled.div`
   & > div {
     margin-bottom: 100px;
   }
 `;
 
-const ColumnWrap = styled.div`
+export const ColumnWrap = styled.div`
   display: flex;
   margin: 26px 0;
   line-height: 40px;
@@ -428,13 +428,15 @@ const ColumnWrap = styled.div`
     gap: 20px 0;
   }
 `;
-const Left = styled.div`
+
+export const Left = styled.div`
   min-width: 276px;
   @media only screen and (max-width: 768px) {
     width: initial;
   }
 `;
-const Right = styled.div`
+
+export const Right = styled.div`
   width: 100%;
   font-size: 18px;
   span {

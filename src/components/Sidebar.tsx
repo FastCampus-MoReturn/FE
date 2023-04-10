@@ -16,6 +16,7 @@ const Sidebar = () => {
 export default Sidebar;
 
 const SidebarWrap = styled.div`
+  z-index: 1000;
   position: fixed;
   top: 30%;
   right: 40px;
