@@ -89,9 +89,18 @@ const ValuationChartContainer = ({ propData, pdfData }: Props) => {
         </ColorInfo>
 
         <SelectSection>
-          <CustomSelect options={options1} onSelect={handleSelect} />
-          <CustomSelect options={options2} onSelect={handleSelect} />
-          <CustomSelect options={options3} onSelect={handleSelect} />
+          <SelectWrapper>
+            <SelectText>거래기간 범위 선택</SelectText>
+            <CustomSelect options={options1} onSelect={handleSelect} />
+          </SelectWrapper>
+          <SelectWrapper>
+            <SelectText>거래층 선택</SelectText>
+            <CustomSelect options={options2} onSelect={handleSelect} />
+          </SelectWrapper>
+          <SelectWrapper>
+            <SelectText>거래면적 선택</SelectText>
+            <CustomSelect options={options3} onSelect={handleSelect} />
+          </SelectWrapper>
         </SelectSection>
       </ValuationChartCont>
       <BarChart filteredData={filteredData} propData={propData} pdfData={pdfData} />
@@ -168,4 +177,10 @@ const SelectSection = styled.div`
   justify-content: space-between;
   width: 100%;
   height: 100%;
+`;
+
+const SelectWrapper = styled.div``;
+const SelectText = styled.div`
+  font-size: 14px;
+  color: #767676;
 `;

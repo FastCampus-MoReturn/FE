@@ -31,6 +31,7 @@ const BarChart = ({ propData, filteredData, pdfData }: Props) => {
 
   // Calculate the maximum value in the data for scaling the y-axis
   const maxValue = Math.max(...propData.map((barData) => parseInt(barData.amount, 10)));
+  const minValue = Math.min(...propData.map((barData) => parseInt(barData.amount, 10)));
 
   // Function to handle mouse enter event on a bar
   const handleBarMouseEnter = (index: number) => {
@@ -43,13 +44,13 @@ const BarChart = ({ propData, filteredData, pdfData }: Props) => {
   };
 
   const getBackgroundColor = (barData: BarChartData) => {
-    if (parseInt(barData.amount, 10) / maxValue >= 0.8) {
+    if ((parseInt(barData.amount, 10) - minValue) / (maxValue - minValue) >= 0.8) {
       return '#1F3094';
-    } else if (parseInt(barData.amount, 10) / maxValue >= 0.6) {
+    } else if ((parseInt(barData.amount, 10) - minValue) / (maxValue - minValue) >= 0.6) {
       return '#4258D7';
-    } else if (parseInt(barData.amount, 10) / maxValue >= 0.4) {
+    } else if ((parseInt(barData.amount, 10) - minValue) / (maxValue - minValue) >= 0.4) {
       return '#8D9BEB';
-    } else if (parseInt(barData.amount, 10) / maxValue >= 0.2) {
+    } else if ((parseInt(barData.amount, 10) - minValue) / (maxValue - minValue) >= 0.2) {
       return '#CED4F4';
     } else if (barData.tradefloor === pdfData.currentFloor) {
       return '#15CDCA';
@@ -59,7 +60,7 @@ const BarChart = ({ propData, filteredData, pdfData }: Props) => {
   };
 
   const getColor = (barData: BarChartData) => {
-    if (parseInt(barData.amount, 10) / maxValue >= 0.4) {
+    if ((parseInt(barData.amount, 10) - minValue) / (maxValue - minValue) >= 0.4) {
       return '#fff';
     } else {
       return '#000';
@@ -110,7 +111,7 @@ const BarChart = ({ propData, filteredData, pdfData }: Props) => {
                     <TooltipStyle>
                       <div className="floorWithArea" style={{ color: '#171717', display: 'flex' }}>
                         <div className="floor">{barData.tradefloor}층</div>
-                        <div className="area">{`(${parseInt(barData.amount, 10)}㎡)`}</div>
+                        <div className="area">{`(${barData.tradeExclusiveArea}㎡)`}</div>
                       </div>
                       <div className="valueWithDate" style={{ display: 'flex', gap: '10px' }}>
                         <div
@@ -188,7 +189,7 @@ const Tooltip = styled.div`
   min-width: 150px;
   max-height: 80px;
   position: absolute;
-  top: -320%;
+  top: -250%;
   left: 90%;
   background-color: #fff;
   padding: 10px;
