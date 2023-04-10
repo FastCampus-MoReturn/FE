@@ -76,7 +76,7 @@ const InfoCheck = ({ pdfData }: Props) => {
           </SmallColumnWrap>
           <div className="mean">
             <ImgFrame>
-              <Img src="/src/assets/img/areaVoca.png" alt="면적 용어" />
+              <Img src="/img/areaVoca.png" alt="면적 용어" />
             </ImgFrame>
           </div>
         </Right>
