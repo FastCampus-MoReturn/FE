@@ -1,10 +1,7 @@
 import styled from '@emotion/styled';
-import { ChangeEvent, MouseEventHandler, SetStateAction, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, SetStateAction, useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import _ from 'lodash';
-import axios, { AxiosProgressEvent, AxiosRequestConfig } from 'axios';
-import { useNavigate } from 'react-router-dom';
-
+import axios, { AxiosProgressEvent } from 'axios';
 import Progress from '@/components/pdf-send/step02/Progress';
 import dragPresets from '@/components/pdf-send/step02/dragEvent';
 import { useAppDispatch } from '@/store/hooks';
@@ -52,7 +49,6 @@ interface HTMLFileInputElement extends HTMLInputElement {
 
 const PDFInput = ({ setStep }: Props) => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   const controllerRef = useRef(new AbortController());
   const inputRef = useRef<HTMLFileInputElement>(null);
   const {
