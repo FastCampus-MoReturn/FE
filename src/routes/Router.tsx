@@ -13,6 +13,7 @@ const Router = () => {
       <Route path="infocheck" element={<InfoCheckPage />} />
       <Route path="dictionary" element={<Dictionary />} />
       <Route path="step" element={<PdfStep />} />
+      <Route path="/" element={<PdfStep />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
