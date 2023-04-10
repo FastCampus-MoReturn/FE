@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import axios from 'axios';
 import { useState } from 'react';
+import { errorMessage } from '@/apis/auth';
 
 interface DictionaryType {
   title: string;
@@ -13,30 +14,43 @@ const ResultInfo = () => {
   const [info, setInfo] = useState<string>();
   const [infoTitle, setInfoTitle] = useState<string>('');
   const [inputValue, setInputValue] = useState('');
-  const [select, setSelect] = useState<number>();
+  const [select, setSelect] = useState<number>(0);
 
   const word = ['가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카', '타', '파', '하'];
-  const getTitleFn = (value: string) => {
-    // eslint-disable-next-line no-shadow
-    const getTitle = async (value: string) => {
-      const response = await axios.post(`https://moreturn.shop:443/api/terms?keyword=${value}`);
 
-      setTitle(response.data.terms.map((v: DictionaryType) => v.title));
-      setInfoTitle(response.data.terms.map((v: DictionaryType) => v.title)[0]);
-      setInfo(response.data.terms.map((v: DictionaryType) => v.description)[0]);
+  // title 호출 및 첫 번째 title 관련 상세정보 호출
+  const getTitleFn = (value: string, type: string) => {
+    // eslint-disable-next-line no-shadow
+    const getTitle = async (value: string, type: string) => {
+      let response;
+      if (type === 'button') {
+        response = await axios.get(`https://moreturn.shop:443/api/terms/${value}`);
+        setSearch(true);
+      } else {
+        response = await axios.post(`https://moreturn.shop:443/api/terms?keyword=${value}`);
+        setSearch(true);
+      }
+
+      if (response?.data.terms.length > 0) {
+        setTitle(response?.data.terms.map((v: DictionaryType) => v.title));
+        setInfoTitle(response?.data.terms.map((v: DictionaryType) => v.title)[0]);
+        setInfo(response?.data.terms.map((v: DictionaryType) => v.description)[0]);
+      } else {
+        errorMessage('해당 키워드에 해당하는 용어가 없습니다.');
+        setSearch(false);
+      }
     };
-    setSearch(true);
     setSelect(0);
-    getTitle(value);
+    getTitle(value, type);
   };
 
+  // title 클릭시 관련 상세정보 호출
   const getInfoFn = (value: string, index: number) => {
     // eslint-disable-next-line no-shadow
     const getInfo = async (value: string) => {
       const response = await axios.post(`https://moreturn.shop:443/api/terms?keyword=${value}`);
-
-      setInfoTitle(response.data.terms.map((v: DictionaryType) => v.title)[0]);
-      setInfo(response.data.terms.map((v: DictionaryType) => v.description)[0]);
+      setInfoTitle(value);
+      setInfo(response.data.terms.map((v: DictionaryType) => v.title === value && v.description));
     };
     getInfo(value);
     setSelect(index);
@@ -60,7 +74,8 @@ const ResultInfo = () => {
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    getTitleFn(inputValue);
+    getTitleFn(inputValue, 'submit');
+    setInputValue('');
   };
 
   return (
@@ -79,7 +94,7 @@ const ResultInfo = () => {
                 // eslint-disable-next-line react/no-array-index-key
                 key={index}
                 onClick={(e) => {
-                  getTitleFn(e.currentTarget.innerText);
+                  getTitleFn(e.currentTarget.innerText, 'button');
                 }}
               >
                 {v}
@@ -110,7 +125,7 @@ const ResultInfo = () => {
                     type="button"
                     onClick={(e) => getInfoFn(e.currentTarget.innerText, index)}
                   >
-                    {title}
+                    <p>{title}</p>
                   </button>
                 </li>
               ))}
@@ -191,18 +206,29 @@ const SearchInput = styled.div`
 
   input {
     width: 828px;
-    heigth: 50px;
+    height: 50px;
     border: 1px solid #d2d2dc;
     border-radius: 10px;
     background-color: #fff;
     color: #171717;
     font-size: 24px;
     padding-left: 10px;
-  }
 
-  input:focus {
-    outline: none;
-    border: 2px solid #4258d7;
+    &:focus {
+      outline: none;
+      border: 2px solid #4258d7;
+    }
+
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 30px #fff inset;
+      -webkit-text-fill-color: #000;
+    }
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+      transition: background-color 5000s ease-in-out 0s;
+    }
   }
 
   button {
@@ -265,22 +291,32 @@ const ResultWrap = styled.div`
         display: flex;
         align-items: center;
         height: 87px;
-        padding: 0 25px;
 
         &.select {
           background: #f0f4ff;
         }
 
         button {
-          font-size: 24px;
-          background: none;
-          color: #171717;
-          border: none;
-          text-align: start;
           width: 100%;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          height: 100%;
+          background: none;
+          border: none;
+          padding: 0 25px;
+
+          & > p {
+            display: block;
+            font-size: 24px;
+            color: #171717;
+            text-align: start;
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0 !important;
+            padding: 0;
+            box-sizing: border-box;
+            border: none;
+          }
         }
       }
     }
@@ -291,6 +327,10 @@ const ResultWrap = styled.div`
 
     ul:last-of-type {
       width: 100%;
+
+      li {
+        padding: 0 25px;
+      }
 
       li:first-of-type {
         background-color: #f0f4ff;
